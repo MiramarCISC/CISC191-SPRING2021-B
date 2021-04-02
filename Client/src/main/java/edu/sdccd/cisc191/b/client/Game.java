@@ -1,4 +1,4 @@
-package edu.sdccd.cisc191.client;
+package edu.sdccd.cisc191.b.client;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;

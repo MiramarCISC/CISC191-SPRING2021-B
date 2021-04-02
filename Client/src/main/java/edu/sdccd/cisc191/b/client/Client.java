@@ -1,4 +1,4 @@
-package edu.sdccd.cisc191.client;
+package edu.sdccd.cisc191.b.client;
 
 import edu.sdccd.cisc191.b.CustomerRequest;
 import edu.sdccd.cisc191.b.CustomerResponse;
