@@ -1,4 +1,4 @@
-package edu.sdccd.cisc191.b;
+package edu.sdccd.cisc191.client;
 
 public class PowerUp {
     private int type;
