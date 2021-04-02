@@ -1,7 +1,4 @@
-package edu.sdccd.cisc191.b.Client;
-
-import edu.sdccd.cisc191.b.CustomerRequest;
-import edu.sdccd.cisc191.b.CustomerResponse;
+package edu.sdccd.cisc191.b;
 
 import java.net.*;
 import java.io.*;
