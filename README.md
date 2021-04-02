@@ -1,4 +1,4 @@
-# CISC191-SPRING2020-B
+# CISC191-SPRING2021-B
 Intermediate Java Programming Group B
 ## Prerequisites
 1. Maven
