@@ -14,10 +14,6 @@ public class Game {
 
     }
 
-    public void update(){
-
-    }
-
     public void onClick(ActionEvent event){
 
     }
@@ -55,8 +51,8 @@ public class Game {
     }
 
     public PowerUp spawnPowerUp(int type){
-        PowerUp power = new PowerUp(type);
+        PowerUp p = new PowerUp(type);
         //position, etc
-        return power;
+        return p;
     }
 }
