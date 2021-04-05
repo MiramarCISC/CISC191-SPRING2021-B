@@ -21,16 +21,38 @@ public class Client {
     private PrintWriter out;
     private BufferedReader in;
 
+    /**
+     * opens a port for the client
+     * creates an outputs stream and input buffered stream
+     * @throws IOException
+     */
+
     public void startConnection(String ip, int port) throws IOException {
         clientSocket = new Socket(ip, port);
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public CustomerResponse sendRequest() throws Exception {
-        out.println(CustomerRequest.toJSON(new CustomerRequest(1)));
-        return CustomerResponse.fromJSON(in.readLine());
+//    public CustomerResponse sendRequest() throws Exception {
+//        out.println(CustomerRequest.toJSON(new CustomerRequest(1)));
+//        return CustomerResponse.fromJSON(in.readLine());
+//    }
+
+    /**
+     * requests server for data
+     * @throws Exception
+     */
+
+    public UserScoreResponse sendRequest() throws Exception {
+        out.println(UserScoreRequest.toJSON(new UserScoreRequest(1)));
+        return UserScoreResponse.fromJSON(in.readLine());
     }
+
+    /**
+     * closes input/output stream
+     * closes client's socket
+     * @throws IOException
+     */
 
     public void stopConnection() throws IOException {
         in.close();
