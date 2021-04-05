@@ -28,7 +28,7 @@ public class Server {
      * The server is used to create new Users if the username is not already in use.
      * It may also be used to store User data for subsequent uses (logins/logouts).
      * This version of Server for the lab creates a user without checking if the
-     * username is in use.
+     * username is currently in use.
      */
 
     public void start(int port) throws Exception {
