@@ -2,6 +2,8 @@ package edu.sdccd.cisc191.b.client;
 
 import edu.sdccd.cisc191.b.CustomerRequest;
 import edu.sdccd.cisc191.b.CustomerResponse;
+import edu.sdccd.cisc191.b.UserDataRequest;
+import edu.sdccd.cisc191.b.UserDataResponse;
 
 import java.net.*;
 import java.io.*;
@@ -17,6 +19,13 @@ import java.io.*;
  * standard output.  This program is meant to be used with
  * the server program, DateServer, which sends the current
  * date and time on the computer where the server is running.
+ *
+ * This client, beyond the above listed capabilities, is used to
+ * send and receive data from the Server pertaining to User objects.
+ * For the sake of the lab, a request is sent for the User with
+ * username "Brent", and without checking for validity, data for
+ * a User with the username Brent and a player level of 0 is
+ * returned from the Server.
  */
 
 public class Client {
@@ -30,9 +39,9 @@ public class Client {
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public CustomerResponse sendRequest() throws Exception {
-        out.println(CustomerRequest.toJSON(new CustomerRequest(1)));
-        return CustomerResponse.fromJSON(in.readLine());
+    public UserDataResponse sendRequest() throws Exception {
+        out.println(UserDataRequest.toJSON(new UserDataRequest("Brent")));
+        return UserDataResponse.fromJSON(in.readLine());
     }
 
     public void stopConnection() throws IOException {

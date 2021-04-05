@@ -2,6 +2,8 @@ package edu.sdccd.cisc191.b.server;
 
 import edu.sdccd.cisc191.b.CustomerRequest;
 import edu.sdccd.cisc191.b.CustomerResponse;
+import edu.sdccd.cisc191.b.UserDataRequest;
+import edu.sdccd.cisc191.b.UserDataResponse;
 
 import java.net.*;
 import java.io.*;
@@ -22,6 +24,13 @@ public class Server {
     private PrintWriter out;
     private BufferedReader in;
 
+    /**
+     * The server is used to create new Users if the username is not already in use.
+     * It may also be used to store User data for subsequent uses (logins/logouts).
+     * This version of Server for the lab creates a user without checking if the
+     * username is in use.
+     */
+
     public void start(int port) throws Exception {
         serverSocket = new ServerSocket(port);
         clientSocket = serverSocket.accept();
@@ -30,9 +39,9 @@ public class Server {
 
         String inputLine;
         while ((inputLine = in.readLine()) != null) {
-            CustomerRequest request = CustomerRequest.fromJSON(inputLine);
-            CustomerResponse response = new CustomerResponse(request.getId(), "Jane", "Doe");
-            out.println(CustomerResponse.toJSON(response));
+            UserDataRequest request = UserDataRequest.fromJSON(inputLine);
+            UserDataResponse response = new UserDataResponse(0, request.getUsername());
+            out.println(UserDataResponse.toJSON(response));
         }
     }
 
