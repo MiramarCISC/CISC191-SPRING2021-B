@@ -35,7 +35,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     Random randomNum;
     int[] enemyXPos;
     int[] enemyYPos;
-    Ship[] alienType1;
+    EnemyShip[] alienType1;
 
 
     public GameView()
@@ -66,15 +66,15 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         for (int x = 0; x < enemyXPos.length; x++) {
             enemyXPos[x] = randomNum.nextInt(GameView_WIDTH);
-            System.out.println(enemyXPos[x]);
+//            System.out.println(enemyXPos[x]);
         }
         for (int y = 0; y < enemyYPos.length; y++){
-//            random[y] = randomNum.nextInt(1000);
+            random[y] = randomNum.nextInt(1000);
 
 //            this will set the y positions over the top of the screen
-//            enemyYPos[y] = random[y] * -1;
+            enemyYPos[y] = random[y] * -1;
 
-            enemyYPos[y] = randomNum.nextInt(640);
+//            enemyYPos[y] = randomNum.nextInt(640);
 //            System.out.println(enemyYPos[y]);
         }
 
@@ -124,9 +124,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         //represents our enemy ship type 1
         g.setColor(Color.red);
-//        moveDown();
+        moveDown();
         for (int i = 0; i < alienType1.length; i++){
-            g.fillRect(alienType1[i].x, alienType1[i].y, 10, 10);
+            g.fillRect(alienType1[i].getX(), alienType1[i].getY(), 10, 10);
         }
 
 
