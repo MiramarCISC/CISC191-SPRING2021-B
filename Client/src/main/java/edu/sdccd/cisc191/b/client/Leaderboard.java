@@ -21,6 +21,4 @@ public class Leaderboard {
         double avg = total/leaderboard.size();
 
     }
-
-
 }
