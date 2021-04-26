@@ -5,6 +5,7 @@ import java.util.*;
 public class Leaderboard {
     private ArrayList<User> levelBoard;
     private ArrayList<User> scoreBoard;
+    int bruh = 1;
 
     public Leaderboard(){
         ArrayList<User> leaderboard = new ArrayList<User>();
