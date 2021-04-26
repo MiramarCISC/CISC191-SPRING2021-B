@@ -7,14 +7,23 @@ public abstract class Ship {
     private int currentHP;
     private int atk;
     private boolean alive;
-    private Point position;
+    int x, y;
+    boolean moveLeft, moveUp, moveRight, moveDown;
+    int moveSpeed;
 
-    public Ship(int maxHP, int atk, Point position) {
+    public Ship(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+
+    public Ship(int x, int y, int maxHP, int atk) {
         this.maxHP = maxHP;
         this.currentHP = maxHP;
         this.atk = atk;
         this.alive = true;
-        this.position = position;
+        this.x = x;
+        this.y = y;
+
     }
 
     public int getMaxHP() {
@@ -49,13 +58,21 @@ public abstract class Ship {
         this.alive = alive;
     }
 
-    public Point getPosition() {
-        return position;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
-    }
-
     public abstract void shoot();
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }
