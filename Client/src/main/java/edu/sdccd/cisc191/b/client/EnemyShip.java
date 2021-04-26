@@ -12,6 +12,8 @@ public class EnemyShip extends Ship{
 
     public EnemyShip(int x, int y, int type){
         super(0,0);
+        this.x = x;
+        this.y = y;
         this.type = type;
         if (type == 1){
             hpView = new HealthBar(maxHp);
@@ -57,6 +59,26 @@ public class EnemyShip extends Ship{
 
     public void setCurrentHp(int currentHp) {
         this.currentHp = currentHp;
+    }
+
+    @Override
+    public int getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
     }
 
     @Override
