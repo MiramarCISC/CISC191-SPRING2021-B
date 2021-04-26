@@ -219,7 +219,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         long beforeTime, timeDiff, sleep;
 
         beforeTime = System.currentTimeMillis();
-        int animationDelay = 500;
+        int animationDelay = 17;
         long time =
                 System.currentTimeMillis();
         while (true) {//infinite loop
