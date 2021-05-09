@@ -37,10 +37,6 @@ public class PlayerShip extends Ship{
         this.lives = lives;
     }
 
-    public void move(){
-
-    }
-
     private void implementPowerUp(PowerUp power){
 
     }
