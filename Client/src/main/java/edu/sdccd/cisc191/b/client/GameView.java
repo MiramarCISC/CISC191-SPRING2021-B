@@ -8,6 +8,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.Timer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -25,17 +26,17 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     private Dimension d;
     int GameView_WIDTH = (int) (size.getWidth() / 2);
     int GameView_HEIGHT = (int) (size.getHeight() - 35);
-    int x = 0;
-    BufferedImage img;
     private Thread animator;
 
     Point playerLocation;
     PlayerShip player;
+    BufferedImage imgPlayer;
 
     Random randomNum;
     int[] enemyXPos;
     int[] enemyYPos;
     EnemyShip[] alienType1;
+    BufferedImage imgAlienType1;
 
 
     public GameView()
@@ -47,15 +48,18 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         setBackground(Color.black);
 
         //Create our player object and set its x and y coordinates
-        playerLocation = new Point(GameView_WIDTH /2, GameView_HEIGHT - 60);
+        loadImgPlayer();
+        playerLocation = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
+                                   GameView_HEIGHT - 100);
         player = new PlayerShip(playerLocation.x, playerLocation.y, 250, 10);
         player.setX(playerLocation.x);
         player.setY(playerLocation.y);
 
 
 
-        //Create our enemy ship type 1
 
+        //Create our enemy ship type 1
+        loadImgAlientType1();
         randomNum = new Random();
         enemyXPos = new int[GameView_WIDTH]; //has number of elements equal to GameView's width
         enemyYPos = new int[1000];
@@ -65,7 +69,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
 
         for (int x = 0; x < enemyXPos.length; x++) {
-            enemyXPos[x] = randomNum.nextInt(GameView_WIDTH);
+            enemyXPos[x] = randomNum.nextInt(GameView_WIDTH - imgAlienType1.getWidth());
 //            System.out.println(enemyXPos[x]);
         }
         for (int y = 0; y < enemyYPos.length; y++){
@@ -105,8 +109,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         //issue: doesn't draw ship
 
         //represents our player
-        g.setColor(Color.blue);
-        g.fillRect(player.getX(), player.getY(), 10, 10);
+        g.drawImage(imgPlayer, player.getX(), player.getY(), this);
         if (player.moveLeft == true){
             player.x -= player.getMoveSpeed();
         }
@@ -125,13 +128,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         //represents our enemy ship type 1
         g.setColor(Color.red);
         moveDown();
-        for (int i = 0; i < alienType1.length; i++){
-            g.fillRect(alienType1[i].getX(), alienType1[i].getY(), 10, 10);
+        for (EnemyShip alien : alienType1) {
+                g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
         }
-
-
-
-
 
 
 //g.fillOval(x,y,r,r);
@@ -188,6 +187,18 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
 
     }
+    public void loadImgPlayer(){
+        try{
+            imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
+        }catch(Exception e){}
+
+
+    }
+    public void loadImgAlientType1(){
+        try{
+            imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
+        }catch(Exception e){}
+    }
 
 
 
@@ -213,6 +224,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     public void mouseClicked(MouseEvent e) {
 
     }
+
 
     public void run() {
 
