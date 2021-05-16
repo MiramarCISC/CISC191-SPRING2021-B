@@ -29,11 +29,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     PlayerShip player;
     BufferedImage imgPlayer;
 
-    Boolean readyToFire, shot = false;
     ArrayList<Point> bulletList;
     Point bullet;
-    int[] bulletX = new int [100];
-    int[] bulletY = new int [100];
     int bulletCount = 0;
 
 
@@ -122,10 +119,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         shoot();
         g.setColor(Color.RED);
         for (int i = 0; i < bulletList.size(); i++) {
-            g.fillRect(bulletList.get(i).x, bulletList.get(i).y, 2, 7);
+            Point bullet = bulletList.get(i);
+            g.fillRect(bullet.x, bullet.y, 2, 7);
         }
-
-
 
 
         //represents our enemy ship type 1
@@ -134,14 +130,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
         }
 
-
-//g.fillOval(x,y,r,r);
-
-//        Font small = new Font("Helvetica", Font.BOLD, 14);
-//        FontMetrics metr = this.getFontMetrics(small);
-//        g.setColor(Color.black);
-//        g.setFont(small);
-//        g.drawString(message, 10, d.height-60);
 
         if (ingame) {
             // g.drawImage(img,0,0,200,200 ,null);
@@ -160,31 +148,36 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
-            player.moveLeft = false;
-            player.moveUp = false;
-            player.moveRight = false;
-            player.moveDown = false;
+            if(key == 37) {//left arrow
+                player.moveLeft = false;
+            }
+            if(key == 39) {//right arrow
+                player.moveRight = false;
+            }
 
-
+            if(key == 38) {//up arrow) {
+                player.moveUp = false;
+            }
+            if (key == 40) {//down arrow
+                player.moveDown = false;
+            }
         }
 
         public void keyPressed(KeyEvent e) {
-//System.out.println( e.getKeyCode());
+            //System.out.println( e.getKeyCode());
             // message = "Key Pressed: " + e.getKeyCode();
             int key = e.getKeyCode();
-            if(player.x > 0 && key == 37) {//left arrow
+            if(key == 37) {//left arrow
                 player.moveLeft = true;
             }
-            if(player.x < GameView_WIDTH - imgPlayer.getWidth()
-            && key == 39) {//right arrow
+            if(key == 39) {//right arrow
                 player.moveRight = true;
             }
 
-            if(player.y > 0 && key == 38) {//up arrow) {
+            if(key == 38) {//up arrow) {
                 player.moveUp = true;
             }
-            if (player.y < GameView_HEIGHT - imgPlayer.getHeight()
-            && key == 40) {//down arrow
+            if (key == 40) {//down arrow
                 player.moveDown = true;
             }
 
