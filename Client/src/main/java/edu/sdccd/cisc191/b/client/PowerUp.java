@@ -7,11 +7,23 @@ public class PowerUp {
     private CooldownBar cooldownDisplay;
 
     public PowerUp(int type){
-        if (type == 1){
-            typeName = "Regeneration";
-            cooldown = 10;
-            cooldownDisplay = new CooldownBar(cooldown);
+        this.type = type;
+        switch(type){
+            case 1:
+                typeName = "Regeneration";
+                cooldown = 10;
+                break;
+            case 2:
+                typeName = "Immunity";
+                cooldown = 5;
+                break;
+            default:
+                typeName = "Unknown";
+                cooldown = 0;
+                break;
         }
+
+        cooldownDisplay = new CooldownBar(cooldown);
     }
 
     public int getType() {
@@ -20,6 +32,12 @@ public class PowerUp {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getTypeName() { return typeName; }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     public int getCooldown() {
