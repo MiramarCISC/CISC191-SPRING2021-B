@@ -7,10 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.Timer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -31,6 +28,14 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     Point playerLocation;
     PlayerShip player;
     BufferedImage imgPlayer;
+
+    Boolean readyToFire, shot = false;
+    ArrayList<Point> bulletList;
+    Point bullet;
+    int[] bulletX = new int [100];
+    int[] bulletY = new int [100];
+    int bulletCount = 0;
+
 
     Random randomNum;
     int[] enemyXPos;
@@ -55,7 +60,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         player.setX(playerLocation.x);
         player.setY(playerLocation.y);
 
-
+        //Create our player's bullet
+        bulletList = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            bullet = new Point(0, 0);
+            bulletList.add(bullet);
+        }
 
 
         //Create our enemy ship type 1
@@ -66,20 +76,15 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         alienType1 = new EnemyShip[100];
         int[] random = new int[1000]; //holds the positive number elements
 
-
-
+        //set x and y coordinate for each type 1 enemy ship
         for (int x = 0; x < enemyXPos.length; x++) {
             enemyXPos[x] = randomNum.nextInt(GameView_WIDTH - imgAlienType1.getWidth());
-//            System.out.println(enemyXPos[x]);
         }
         for (int y = 0; y < enemyYPos.length; y++){
             random[y] = randomNum.nextInt(1000);
 
-//            this will set the y positions over the top of the screen
+            //this will set the y positions over the top of the screen
             enemyYPos[y] = random[y] * -1;
-
-//            enemyYPos[y] = randomNum.nextInt(640);
-//            System.out.println(enemyYPos[y]);
         }
 
         for(int i = 0; i < alienType1.length; i++){
@@ -87,14 +92,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
 
 
-           /*
-             try {
-                img = ImageIO.read(this.getClass().getResource("mount.jpg"));
-            } catch (IOException e) {
-                 System.out.println("Image could not be read");
-            // System.exit(1);
-            }
-            */
         if (animator == null || !ingame) {
             animator = new Thread(this);
             animator.start();
@@ -106,27 +103,32 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     {
         super.paint(g);
 
-        //issue: doesn't draw ship
-
         //represents our player
         g.drawImage(imgPlayer, player.getX(), player.getY(), this);
-        if (player.moveLeft == true){
+        if (player.moveLeft == true && player.x > 0){
             player.x -= player.getMoveSpeed();
         }
-        if (player.moveRight == true){
+        if (player.moveRight == true && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15){
             player.x += player.getMoveSpeed();
         }
-        if (player.moveUp == true){
+        if (player.moveUp == true && player.y > 0){
             player.y -= player.getMoveSpeed();
         }
-        if (player.moveDown == true){
+        if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
             player.y += player.getMoveSpeed();
         }
+
+        //draw player's bullet
+        shoot();
+        g.setColor(Color.RED);
+        for (int i = 0; i < bulletList.size(); i++) {
+            g.fillRect(bulletList.get(i).x, bulletList.get(i).y, 2, 7);
+        }
+
 
 
 
         //represents our enemy ship type 1
-        g.setColor(Color.red);
         moveDown();
         for (EnemyShip alien : alienType1) {
                 g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
@@ -152,8 +154,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         for (int i = 0; i < alienType1.length; i++){
             alienType1[i].y += alienType1[i].moveSpeed;
         }
-
     }
+
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
@@ -163,29 +165,36 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             player.moveRight = false;
             player.moveDown = false;
 
+
         }
 
         public void keyPressed(KeyEvent e) {
 //System.out.println( e.getKeyCode());
             // message = "Key Pressed: " + e.getKeyCode();
             int key = e.getKeyCode();
-            if(key==37){//left arrow
+            if(player.x > 0 && key == 37) {//left arrow
                 player.moveLeft = true;
             }
-            if(key==38){//up arrow
-                player.moveUp = true;
-            }
-            if(key==39){//right arrow
+            if(player.x < GameView_WIDTH - imgPlayer.getWidth()
+            && key == 39) {//right arrow
                 player.moveRight = true;
             }
-            if(key==40){//down arrow
+
+            if(player.y > 0 && key == 38) {//up arrow) {
+                player.moveUp = true;
+            }
+            if (player.y < GameView_HEIGHT - imgPlayer.getHeight()
+            && key == 40) {//down arrow
                 player.moveDown = true;
             }
 
-
-
+            if(key==32) { //space bar
+                if (bulletCount > 99)
+                    bulletCount = 0;
+                bulletList.set(bulletCount, new Point(player.getX() + 25, player.getY()));
+                bulletCount++;
+            }
         }
-
     }
     public void loadImgPlayer(){
         try{
@@ -200,8 +209,14 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }catch(Exception e){}
     }
 
-
-
+    public void shoot(){
+        for (int i = 0; i < bulletList.size(); i++) {
+            Point bulletPoint = bulletList.get(i);
+            bulletPoint.setLocation(bulletPoint.getX(), bulletPoint.getY() - 10);
+            if (bulletPoint.getY() < 0)
+                bulletList.set(i, new Point(0, 0));
+        }
+    }
 
     public void mousePressed(MouseEvent e) {
         int x = e.getX();
