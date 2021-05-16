@@ -30,10 +30,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     BufferedImage imgPlayer;
 
     Boolean readyToFire, shot = false;
-    ArrayList<Rectangle> bulletList;
-    Rectangle bullet;
+    ArrayList<Point> bulletList;
+    Point bullet;
     int[] bulletX = new int [100];
     int[] bulletY = new int [100];
+    int bulletCount = 0;
 
     public GameView()
     {
@@ -54,9 +55,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         //Create our player's bullet
         bulletList = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            bulletX[i] = player.getX() + imgPlayer.getWidth() / 2;
-            bulletY[i] = player.getY();
-            bullet = new Rectangle(bulletX[i], bulletY[i], 2, 10);
+            bullet = new Point(0, 0);
             bulletList.add(bullet);
         }
 
@@ -89,12 +88,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         //draw player's bullet
         shoot();
-        if (shot){
-            g.setColor(Color.RED);
-            for (int i = 0; i < bulletList.size(); i++) {
-                g.fillRect(bulletList.get(i).x, bulletList.get(i).y, bullet.width, bullet.height);
-            }
+        g.setColor(Color.RED);
+        for (int i = 0; i < bulletList.size(); i++) {
+            g.fillRect(bulletList.get(i).x, bulletList.get(i).y, 2, 7);
         }
+
 
         if (ingame) {
             // g.drawImage(img,0,0,200,200 ,null);
@@ -112,7 +110,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             player.moveRight = false;
             player.moveDown = false;
 
-
+/*
             if(key==32) {//spacebar release
                 if(bulletList.size() == 0){
                     readyToFire = false;
@@ -127,7 +125,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                         readyToFire = true;
                     }
                 }
-            }
+            }*/
         }
 
         public void keyPressed(KeyEvent e) {
@@ -150,17 +148,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 player.moveDown = true;
             }
 
-            if(key==32){//space bar
-                if (bulletList.size() > 0){
-                    readyToFire = true;
-                }
-                if (readyToFire){
-                    for (int i = 0; i < bulletList.size(); i++) {
-                        bulletList.get(i).x = bulletX[i];
-                        bulletList.get(i).y = bulletY[i];
-                        shot = true;
-                    }
-                }
+            if(key==32) { //space bar
+                if (bulletCount > 99)
+                    bulletCount = 0;
+                bulletList.set(bulletCount, new Point(player.getX() + 25, player.getY()));
+                bulletCount++;
             }
         }
     }
@@ -172,10 +164,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     }
 
     public void shoot(){
-        if (shot){
-            for (int i = 0; i < bulletList.size(); i++) {
-                bulletList.get(i).y -= 10;
-            }
+        for (int i = 0; i < bulletList.size(); i++) {
+            Point bulletPoint = bulletList.get(i);
+            bulletPoint.setLocation(bulletPoint.getX(), bulletPoint.getY() - 10);
+            if (bulletPoint.getY() < 0)
+                bulletList.set(i, new Point(0, 0));
         }
     }
 
