@@ -18,21 +18,21 @@ public class EnemyShip extends Ship{
         if (type == 1){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 5;
+            moveSpeed = 2;
             scoreToDrop = 1;
         }
 
         if (type == 2){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 10;
+            moveSpeed = 4;
             scoreToDrop = 2;
         }
 
         if (type == 3){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 15;
+            moveSpeed = 6;
             scoreToDrop = 3;
         }
     }

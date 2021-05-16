@@ -13,7 +13,7 @@ public class PlayerShip extends Ship{
     public PlayerShip(int x, int y, int maxHP, int atk){
         super(x,y, maxHP,atk);
         lives = 3;
-        moveSpeed = 10;
+        moveSpeed = 5;
         this.maxHp = maxHP;
         currentHp = maxHP;
         hpView = new HealthBar(maxHP);
@@ -35,10 +35,6 @@ public class PlayerShip extends Ship{
 
     public void setLives(int lives) {
         this.lives = lives;
-    }
-
-    public void move(){
-
     }
 
     private void implementPowerUp(PowerUp power){
