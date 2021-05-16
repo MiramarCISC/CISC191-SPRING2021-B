@@ -35,14 +35,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     int[] bulletX = new int [100];
     int[] bulletY = new int [100];
 
-
-    Random randomNum;
-    int[] enemyXPos;
-    int[] enemyYPos;
-    EnemyShip[] alienType1;
-    BufferedImage imgAlienType1;
-
-
     public GameView()
     {
         addKeyListener(new TAdapter());
@@ -62,32 +54,10 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         //Create our player's bullet
         bulletList = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            bullet = new Rectangle(0,0,0,0);
+            bulletX[i] = player.getX() + imgPlayer.getWidth() / 2;
+            bulletY[i] = player.getY();
+            bullet = new Rectangle(bulletX[i], bulletY[i], 2, 10);
             bulletList.add(bullet);
-        }
-
-
-        //Create our enemy ship type 1
-        loadImgAlientType1();
-        randomNum = new Random();
-        enemyXPos = new int[GameView_WIDTH]; //has number of elements equal to GameView's width
-        enemyYPos = new int[1000];
-        alienType1 = new EnemyShip[100];
-        int[] random = new int[1000]; //holds the positive number elements
-
-        //set x and y coordinate for each type 1 enemy ship
-        for (int x = 0; x < enemyXPos.length; x++) {
-            enemyXPos[x] = randomNum.nextInt(GameView_WIDTH - imgAlienType1.getWidth());
-        }
-        for (int y = 0; y < enemyYPos.length; y++){
-            random[y] = randomNum.nextInt(1000);
-
-            //this will set the y positions over the top of the screen
-            enemyYPos[y] = random[y] * -1;
-        }
-
-        for(int i = 0; i < alienType1.length; i++){
-            alienType1[i] = new EnemyShip(enemyXPos[i], enemyYPos[i], 1);
         }
 
 
@@ -126,35 +96,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
         }
 
-
-
-
-        //represents our enemy ship type 1
-        moveDown();
-        for (EnemyShip alien : alienType1) {
-                g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
-        }
-
-
-//g.fillOval(x,y,r,r);
-
-//        Font small = new Font("Helvetica", Font.BOLD, 14);
-//        FontMetrics metr = this.getFontMetrics(small);
-//        g.setColor(Color.black);
-//        g.setFont(small);
-//        g.drawString(message, 10, d.height-60);
-
         if (ingame) {
             // g.drawImage(img,0,0,200,200 ,null);
         }
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
-    }
-
-    public void moveDown(){
-        for (int i = 0; i < alienType1.length; i++){
-            alienType1[i].y += alienType1[i].moveSpeed;
-        }
     }
 
     private class TAdapter extends KeyAdapter {
@@ -175,15 +121,13 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 for (int i = 0; i < bulletList.size(); i++) {
                     if (bulletList.get(i).y <= -10){
                         bulletList.remove(bulletList.get(i));
-                        bullet = new Rectangle(0,0,0,0);
+                        bullet = new Rectangle(bulletX[i],bulletY[i],2,10);
                         bulletList.add(bullet);
                         shot = false;
                         readyToFire = true;
                     }
                 }
-
             }
-
         }
 
         public void keyPressed(KeyEvent e) {
@@ -212,25 +156,19 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 }
                 if (readyToFire){
                     for (int i = 0; i < bulletList.size(); i++) {
-                        bulletList.get(i).x = player.getX() + imgPlayer.getWidth()/2;
-                        bulletList.get(i).y = player.getY();
+                        bulletList.get(i).x = bulletX[i];
+                        bulletList.get(i).y = bulletY[i];
                         shot = true;
                     }
                 }
             }
         }
     }
-    public void loadImgPlayer(){
-        try{
+    public void loadImgPlayer() {
+        try {
             imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
-        }catch(Exception e){}
-
-
-    }
-    public void loadImgAlientType1(){
-        try{
-            imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     public void shoot(){
