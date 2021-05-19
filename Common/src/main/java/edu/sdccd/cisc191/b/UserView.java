@@ -1,21 +1,19 @@
-package edu.sdccd.cisc191.b.client;
+package edu.sdccd.cisc191.b;
 
-import java.util.*;
-
-public class User implements Comparable<User>{
+public class UserView implements Comparable<UserView>{
     private String name;
     private int gamesPlayed;
     private int gameLevelsCleared;
     private int highScore;
 
-    public User(String name) {
+    public UserView(String name) {
         this.name = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
         highScore = 0;
     }
 
-    public User(String name, int userLevel) {
+    public UserView(String name, int userLevel) {
         this.name = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
@@ -55,14 +53,14 @@ public class User implements Comparable<User>{
     }
 
     @Override
-    public int compareTo(User user) {
-        int high = user.getHighScore();
+    public int compareTo(UserView userView) {
+        int high = userView.getHighScore();
         int thisHigh = this.getHighScore();
         if (thisHigh > high)
             return 1;
         else if (thisHigh < high)
             return -1;
         else
-            return this.name.compareTo(user.name);
+            return this.name.compareTo(userView.name);
     }
 }

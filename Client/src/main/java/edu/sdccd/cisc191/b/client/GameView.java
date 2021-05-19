@@ -43,6 +43,19 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     EnemyShip[] alienType1;
     BufferedImage imgAlienType1;
 
+    /*class BulletUpdateTask extends Thread{
+        Graphics g;
+
+        public BulletUpdateTask(Graphics g){
+            this.g = g;
+        }
+
+        public void run() {
+            for (int i = 0; i < bulletList.size(); i++) {
+                g.fillRect(bulletList.get(i).x, bulletList.get(i).y, 2, 7);
+            }
+        }
+    }*/
 
     public GameView()
     {
@@ -119,12 +132,25 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
 
         //draw player's bullet
+        if (bulletCount > 99)
+            bulletCount = 0;
+        if (bulletCount % 5 == 0)
+            bulletList.set(bulletCount, new Point(player.getX() + 25, player.getY()));
+        bulletCount++;
         shoot();
         g.setColor(Color.RED);
         for (int i = 0; i < bulletList.size(); i++) {
             g.fillRect(bulletList.get(i).x, bulletList.get(i).y, 2, 7);
         }
-
+        /*BulletUpdateTask task = new BulletUpdateTask(g);
+        task.start();
+        while (task.isAlive()){
+            try {
+                task.join();
+            }
+            catch (InterruptedException e){
+            }
+        }*/
 
 
 
@@ -188,12 +214,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 player.moveDown = true;
             }
 
-            if(key==32) { //space bar
+            /*if(key==32) { //space bar
                 if (bulletCount > 99)
                     bulletCount = 0;
                 bulletList.set(bulletCount, new Point(player.getX() + 25, player.getY()));
                 bulletCount++;
-            }
+            }*/
         }
     }
     public void loadImgPlayer(){

@@ -1,33 +1,47 @@
-package edu.sdccd.cisc191.b.client;
+package edu.sdccd.cisc191.b.server;
 
-import java.util.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-public class User implements Comparable<User>{
-    private String name;
+@Entity(name = "User_Entity")
+public class User{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String userName;
     private int gamesPlayed;
     private int gameLevelsCleared;
     private int highScore;
 
+    protected User(){}
+
     public User(String name) {
-        this.name = name;
+        this.userName = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
         highScore = 0;
     }
 
-    public User(String name, int userLevel) {
-        this.name = name;
+    public User(String name, int highScore) {
+        this.userName = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
-        highScore = 0;
+        this.highScore = highScore;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("User[id=%d, userName='%s', highScore=%d]", id, userName, highScore);
     }
 
     public String getName() {
-        return name;
+        return userName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.userName = name;
     }
 
     public int getGamesPlayed() {
@@ -54,15 +68,5 @@ public class User implements Comparable<User>{
         this.highScore = highScore;
     }
 
-    @Override
-    public int compareTo(User user) {
-        int high = user.getHighScore();
-        int thisHigh = this.getHighScore();
-        if (thisHigh > high)
-            return 1;
-        else if (thisHigh < high)
-            return -1;
-        else
-            return this.name.compareTo(user.name);
-    }
 }
+
