@@ -70,7 +70,7 @@ public class HealthBar extends Bar {
         return time;
     }
 
-
+    //for testing
     //public static void main (String[] args) {
 //        HealthBar hb = new HealthBar(50);
 //        hb.decreaseCurrent(25);
