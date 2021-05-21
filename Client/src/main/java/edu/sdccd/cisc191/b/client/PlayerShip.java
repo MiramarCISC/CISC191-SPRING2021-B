@@ -8,12 +8,12 @@ public class PlayerShip extends Ship{
     private HealthBar hpView;
     private int maxHp, currentHp;
     int x, y;
-    boolean moveLeft, moveUp, moveRight, moveDown;
+    boolean moveLeft, moveUp, moveRight, moveDown, bullet;
 
     public PlayerShip(int x, int y, int maxHP, int atk){
         super(x,y, maxHP,atk);
         lives = 3;
-        moveSpeed = 5;
+        moveSpeed = 10;
         this.maxHp = maxHP;
         currentHp = maxHP;
         hpView = new HealthBar(maxHP);
@@ -35,6 +35,10 @@ public class PlayerShip extends Ship{
 
     public void setLives(int lives) {
         this.lives = lives;
+    }
+
+    public void move(){
+
     }
 
     private void implementPowerUp(PowerUp power){
@@ -86,7 +90,8 @@ public class PlayerShip extends Ship{
     }
 
     @Override
-    public void shoot() {
-
+    public Bullet shoot() {
+        return new Bullet(getX(), getY());
     }
+
 }

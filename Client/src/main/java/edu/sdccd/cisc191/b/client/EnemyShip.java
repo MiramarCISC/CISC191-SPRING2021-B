@@ -9,30 +9,32 @@ public class EnemyShip extends Ship{
     int maxHp, currentHp;
     int x,y;
     int moveSpeed;
+    boolean hit;
 
     public EnemyShip(int x, int y, int type){
         super(0,0);
         this.x = x;
         this.y = y;
         this.type = type;
+        hit = false;
         if (type == 1){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 2;
+            moveSpeed = 5;
             scoreToDrop = 1;
         }
 
         if (type == 2){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 4;
+            moveSpeed = 10;
             scoreToDrop = 2;
         }
 
         if (type == 3){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 6;
+            moveSpeed = 15;
             scoreToDrop = 3;
         }
     }
@@ -61,6 +63,18 @@ public class EnemyShip extends Ship{
         this.currentHp = currentHp;
     }
 
+    public Rectangle getHitBox() {
+        return new Rectangle(getX(),getY(), 15,15);
+    }
+
+    public boolean isHit() {
+        return hit;
+    }
+
+    public void setHit(boolean hit) {
+        this.hit = hit;
+    }
+
     @Override
     public int getX() {
         return x;
@@ -82,7 +96,7 @@ public class EnemyShip extends Ship{
     }
 
     @Override
-    public void shoot(){
-
+    public Bullet shoot(){
+        return new Bullet(getX(),getY());
     }
 }
