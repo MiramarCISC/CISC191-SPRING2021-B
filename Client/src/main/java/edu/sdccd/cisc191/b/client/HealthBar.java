@@ -47,6 +47,7 @@ public class HealthBar extends Bar {
         //}
     }
 
+    //issue: not actually working; runs once and waits only for specified in time.schedule()
     class Regen extends TimerTask {
         int healthIncrease;
 
