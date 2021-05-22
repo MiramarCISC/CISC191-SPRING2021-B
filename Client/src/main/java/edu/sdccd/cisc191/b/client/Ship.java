@@ -1,7 +1,5 @@
 package edu.sdccd.cisc191.b.client;
 
-import java.awt.*;
-
 public abstract class Ship {
     private int maxHP;
     private int currentHP;
@@ -58,7 +56,7 @@ public abstract class Ship {
         this.alive = alive;
     }
 
-    public abstract void shoot();
+    public abstract Bullet shoot();
 
     public int getX() {
         return x;

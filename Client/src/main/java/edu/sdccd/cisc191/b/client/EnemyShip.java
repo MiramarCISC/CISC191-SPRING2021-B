@@ -9,6 +9,7 @@ public class EnemyShip extends Ship{
     int maxHp, currentHp;
     int x,y;
     int moveSpeed;
+    boolean hit;
 
     public EnemyShip(int x, int y, int type){
         super(0,0);
@@ -35,6 +36,18 @@ public class EnemyShip extends Ship{
             moveSpeed = 6;
             scoreToDrop = 3;
         }
+    }
+
+    public Rectangle getHitBox() {
+        return new Rectangle(getX(),getY(), 50,50);
+    }
+
+    public boolean isHit() {
+        return hit;
+    }
+
+    public void setHit(boolean hit) {
+        this.hit = hit;
     }
 
     public int getScoreToDrop() {
@@ -82,7 +95,8 @@ public class EnemyShip extends Ship{
     }
 
     @Override
-    public void shoot(){
+    public Bullet shoot(){
 
+        return null;
     }
 }

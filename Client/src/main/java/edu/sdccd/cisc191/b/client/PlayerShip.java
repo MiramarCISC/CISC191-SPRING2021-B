@@ -1,7 +1,5 @@
 package edu.sdccd.cisc191.b.client;
 
-import java.awt.*;
-
 public class PlayerShip extends Ship{
     private int moveSpeed;
     private int lives;
@@ -86,7 +84,8 @@ public class PlayerShip extends Ship{
     }
 
     @Override
-    public void shoot() {
+    public Bullet shoot() {
+        return new Bullet(getX(),getY());
 
     }
 }
