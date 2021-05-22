@@ -1,5 +1,7 @@
 package edu.sdccd.cisc191.b.client;
 
+import java.awt.*;
+
 public class PlayerShip extends Ship{
     private int moveSpeed;
     private int lives;
@@ -7,6 +9,7 @@ public class PlayerShip extends Ship{
     private int maxHp, currentHp;
     int x, y;
     boolean moveLeft, moveUp, moveRight, moveDown;
+    Rectangle hitBox;
 
     public PlayerShip(int x, int y, int maxHP, int atk){
         super(x,y, maxHP,atk);
@@ -16,7 +19,12 @@ public class PlayerShip extends Ship{
         currentHp = maxHP;
         hpView = new HealthBar(maxHP);
         hpView = new HealthBar(currentHp);
+        setAlive(true);
 
+    }
+
+    public Rectangle getHitBox() {
+        return new Rectangle(getX(), getY(), 50, 50);
     }
 
     public int getMoveSpeed() {
