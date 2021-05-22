@@ -1,12 +1,10 @@
 package edu.sdccd.cisc191.b.client;
 
-import edu.sdccd.cisc191.b.CustomerRequest;
-import edu.sdccd.cisc191.b.CustomerResponse;
-import edu.sdccd.cisc191.b.UserDataRequest;
-import edu.sdccd.cisc191.b.UserDataResponse;
+import edu.sdccd.cisc191.b.*;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This program opens a connection to a computer specified
@@ -30,30 +28,31 @@ import java.io.*;
 
 public class Client {
     private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    public void startConnection(String ip, int port) throws IOException {
+    public void startConnection(String ip, int port) throws Exception {
         clientSocket = new Socket(ip, port);
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        out = new ObjectOutputStream(clientSocket.getOutputStream());
+        in = new ObjectInputStream(clientSocket.getInputStream());
+
+        out.writeObject(new UserProfileRequest("Azaxar"));
+        UserProfileResponse response = (UserProfileResponse)in.readObject();
+        User user = new User(response.getUserName(), response.getGamesPlayed(), response.getGameLevelsCleared(), response.getHighScore());
+        System.out.println(response);
     }
 
-    public UserDataResponse sendRequest() throws Exception {
-        out.println(UserDataRequest.toJSON(new UserDataRequest("Brent")));
-        return UserDataResponse.fromJSON(in.readLine());
-    }
 
     public void stopConnection() throws IOException {
         in.close();
         out.close();
         clientSocket.close();
     }
+
     public static void main(String[] args) {
         Client client = new Client();
         try {
             client.startConnection("127.0.0.1", 4444);
-            System.out.println(client.sendRequest().toString());
             client.stopConnection();
         } catch(Exception e) {
             e.printStackTrace();

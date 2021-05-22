@@ -1,16 +1,22 @@
 package edu.sdccd.cisc191.b.server;
 
+import edu.sdccd.cisc191.b.UserProfileRequest;
+import edu.sdccd.cisc191.b.UserProfileResponse;
+import edu.sdccd.cisc191.b.UserScoreRequest;
+import edu.sdccd.cisc191.b.UserScoreResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import edu.sdccd.cisc191.b.UserDataRequest;
-import edu.sdccd.cisc191.b.UserDataResponse;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This program is a server that takes connection requests on
@@ -26,8 +32,8 @@ import java.io.*;
 public class Server {
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
 
@@ -41,25 +47,32 @@ public class Server {
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
         clientSocket = serverSocket.accept();
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        out = new ObjectOutputStream(clientSocket.getOutputStream());
+        in = new ObjectInputStream(clientSocket.getInputStream());
 
-        userRepository.save(new User("Azaxar", 10000));
-        userRepository.save(new User("ikimdaryl", 18000));
-        userRepository.save(new User("ahuang", 99999));
-        userRepository.save(new User("Salami", 9000));
-        userRepository.save(new User("xXNoobSlayerXx", 0));
-
-        for (User use : userRepository.findTop6ByOrderByHighScoreDesc()) {
-            log.info(use.toString());
+        Object requestObject = in.readObject();
+        if (requestObject instanceof UserProfileRequest) {
+            UserProfileRequest request = (UserProfileRequest) requestObject;
+            User user = userRepository.findByUserName(request.getUserName());
+            if (user == null) {
+                user = new User(request.getUserName());
+                userRepository.save(user);
+            }
+            UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getGameLevelsCleared(), user.getHighScore());
+            out.writeObject(response);
         }
-        log.info("");
-
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            UserDataRequest request = UserDataRequest.fromJSON(inputLine);
-            UserDataResponse response = new UserDataResponse(0, request.getUsername());
-            out.println(UserDataResponse.toJSON(response));
+        else if (requestObject instanceof UserScoreRequest) {
+            UserScoreRequest request = (UserScoreRequest) requestObject;
+            User user = userRepository.findByUserName(request.getUserName());
+            if (request.getHighScore() > user.getHighScore()) {
+                user.setHighScore(request.getHighScore());
+                userRepository.save(user);
+            }
+            ArrayList<UserScoreRequest> leaderBoard = new ArrayList<>();
+            for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
+                leaderBoard.add(new UserScoreRequest(u.getUserName(), u.getHighScore()));
+            }
+            out.writeObject(leaderBoard);
         }
     }
 

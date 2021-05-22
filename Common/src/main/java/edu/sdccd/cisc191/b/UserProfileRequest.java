@@ -1,19 +1,10 @@
 package edu.sdccd.cisc191.b;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Serializable;
 
-public class UserProfileRequest {
+public class UserProfileRequest implements Serializable {
     private String userName;
 
-    @JsonIgnore
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    public static String toJSON(UserProfileRequest profile) throws Exception {
-        return objectMapper.writeValueAsString(profile);
-    }
-    public static UserProfileRequest fromJSON(String input) throws Exception{
-        return objectMapper.readValue(input, UserProfileRequest.class);
-    }
     protected UserProfileRequest() {}
 
     public UserProfileRequest(String userName) {
@@ -29,9 +20,5 @@ public class UserProfileRequest {
 
     public String getUserName() {
         return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 }

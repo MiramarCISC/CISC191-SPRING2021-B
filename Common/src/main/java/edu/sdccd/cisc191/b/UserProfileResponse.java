@@ -1,22 +1,13 @@
 package edu.sdccd.cisc191.b;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Serializable;
 
-public class UserProfileResponse {
+public class UserProfileResponse implements Serializable {
     private String userName;
     private Integer gamesPlayed;
     private Integer gameLevelsCleared;
     private Integer highScore;
 
-    @JsonIgnore
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    public static String toJSON(UserProfileResponse profile) throws Exception {
-        return objectMapper.writeValueAsString(profile);
-    }
-    public static UserProfileResponse fromJSON(String input) throws Exception{
-        return objectMapper.readValue(input, UserProfileResponse.class);
-    }
     protected UserProfileResponse() {}
 
     public UserProfileResponse(String name, Integer gamesPlayed, Integer gameLevelsCleared, Integer highScore) {
@@ -33,4 +24,19 @@ public class UserProfileResponse {
                 userName,gamesPlayed,gameLevelsCleared,highScore);
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public Integer getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public Integer getGameLevelsCleared() {
+        return gameLevelsCleared;
+    }
+
+    public Integer getHighScore() {
+        return highScore;
+    }
 }
