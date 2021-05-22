@@ -13,11 +13,11 @@ public class UserView implements Comparable<UserView>{
         highScore = 0;
     }
 
-    public UserView(String name, int userLevel) {
+    public UserView(String name, int highScore) {
         this.name = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
-        highScore = 0;
+        this.highScore = highScore;
     }
 
     public String getName() {

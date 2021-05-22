@@ -15,11 +15,11 @@ public class User implements Comparable<User>{
         highScore = 0;
     }
 
-    public User(String name, int userLevel) {
+    public User(String name, int highScore) {
         this.userName = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
-        highScore = 0;
+        this.highScore = highScore;
     }
 
     public User(String name, int gamesPlayed, int gameLevelsCleared, int highScore) {
