@@ -104,37 +104,40 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         if (ingame) {
             // g.drawImage(img,0,0,200,200 ,null);
             //represents our player
-            g.drawImage(imgPlayer, player.getX(), player.getY(), this);
-            if (player.moveLeft == true && player.x > 0){
-                player.x -= player.getMoveSpeed();
-            }
-            if (player.moveRight == true && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15){
-                player.x += player.getMoveSpeed();
-            }
-            if (player.moveUp == true && player.y > 0){
-                player.y -= player.getMoveSpeed();
-            }
-            if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
-                player.y += player.getMoveSpeed();
+            if(player.isAlive()){
+                g.drawImage(imgPlayer, player.getX(), player.getY(), this);
+                if (player.moveLeft == true && player.x > 0){
+                    player.x -= player.getMoveSpeed();
+                }
+                if (player.moveRight == true && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15){
+                    player.x += player.getMoveSpeed();
+                }
+                if (player.moveUp == true && player.y > 0){
+                    player.y -= player.getMoveSpeed();
+                }
+                if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
+                    player.y += player.getMoveSpeed();
+                }
+
+                //draw player's bullet
+
+                if (bulletCount > 99)
+                    bulletCount = 0;
+                if (bulletCount % 10 == 0)
+                    bulletList.set(bulletCount, new Bullet(player.getX() + 25, player.getY()));
+                bulletCount++;
+                shoot();
+                g.setColor(Color.RED);
+                for (int i = 0; i < bulletList.size(); i++) {
+                    g.fillRect(bulletList.get(i).getX(), bulletList.get(i).getY(), 2, 7);
+                }
             }
 
-            //draw player's bullet
-
-            if (bulletCount > 99)
-                bulletCount = 0;
-            if (bulletCount % 10 == 0)
-                bulletList.set(bulletCount, new Bullet(player.getX() + 25, player.getY()));
-            bulletCount++;
-            shoot();
-            g.setColor(Color.RED);
-            for (int i = 0; i < bulletList.size(); i++) {
-                g.fillRect(bulletList.get(i).getX(), bulletList.get(i).getY(), 2, 7);
-            }
 
 
             //represents our enemy ship type 1
             moveDown();
-            enemyHit();
+            collision();
             for (int i = 0; i < alienType1.length; i++) {
                 g.drawImage(imgAlienType1, alienType1[i].getX(), alienType1[i].getY(), this);
             }
@@ -220,13 +223,18 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
         }
     }
-    public void enemyHit(){
+    public void collision(){
         for (int i = 0; i < bulletList.size(); i++) {
             for (int j = 0; j < alienType1.length; j++) {
                 if (alienType1[j].isHit() || alienType1[j].getY() >= GameView_HEIGHT) {
                     alienType1[j].setY(-50);
                     alienType1[j].setHit(false);
                 }
+            }
+        }
+        for (int i = 0; i < alienType1.length; i++) {
+            if(alienType1[i].getHitBox().intersects(player.getHitBox())){
+                player.setAlive(false);
             }
         }
     }
