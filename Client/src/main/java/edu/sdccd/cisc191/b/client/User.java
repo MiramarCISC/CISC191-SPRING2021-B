@@ -3,31 +3,38 @@ package edu.sdccd.cisc191.b.client;
 import java.util.*;
 
 public class User implements Comparable<User>{
-    private String name;
+    private String userName;
     private int gamesPlayed;
     private int gameLevelsCleared;
     private int highScore;
 
     public User(String name) {
-        this.name = name;
+        this.userName = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
         highScore = 0;
     }
 
-    public User(String name, int highScore) {
-        this.name = name;
+    public User(String name, int userLevel) {
+        this.userName = name;
         gamesPlayed = 0;
         gameLevelsCleared = 0;
-        this.highScore = 0;
+        highScore = 0;
     }
 
-    public String getName() {
-        return name;
+    public User(String name, int gamesPlayed, int gameLevelsCleared, int highScore) {
+        this.userName = name;
+        this.gamesPlayed = gamesPlayed;
+        this.gameLevelsCleared = gameLevelsCleared;
+        this.highScore = highScore;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String name) {
+        this.userName = name;
     }
 
     public int getGamesPlayed() {
@@ -63,6 +70,6 @@ public class User implements Comparable<User>{
         else if (thisHigh < high)
             return -1;
         else
-            return this.name.compareTo(user.name);
+            return this.userName.compareTo(user.userName);
     }
 }
