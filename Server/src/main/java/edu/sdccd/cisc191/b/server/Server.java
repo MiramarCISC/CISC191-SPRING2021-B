@@ -10,23 +10,31 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
- * This program is a server that takes connection requests on
- * the port specified by the constant LISTENING_PORT.  When a
- * connection is opened, the program sends the current time to
- * the connected socket.  The program will continue to receive
- * and process connections until it is killed (by a CONTROL-C,
- * for example).  Note that this server processes each connection
- * as it is received, rather than creating a separate thread
- * to process the connection.
+ * @author Joaquin Dicang
+ *
+ * This program is a server used to send and receive data from the Client pertaining to User objects.
+ *
+ * When the game is launched, the Server receives a UserProfileRequest(userName) from
+ * the Client containing a String userName. The Server finds a User in the database
+ * with userName, and a User does not exist, the Server creates a User with userName
+ * and saves it to the database. The Server sends a UserProfileResponse containing the
+ * found or created User information to the Client.
+ *
+ * As the game is played, the player accumulates score for defeating enemies, which is
+ * stored and updated in an instance variable Integer score. When the game is over (the
+ * player ship collides with an enemy ship, or an enemy ship reaches the bottom of the
+ * screen), the Server receives a UserScoreRequest(userName,score) from the Client. The
+ * Server finds a User using userName, and compares the score from the request to the
+ * highScore in the database; if the score is higher, the User in the database is updated
+ * with the higher score. The Server finds the top 10 Users with the highest scores, and
+ * translates the List of User elements into an ArrayList of UserScoreResponse elements.
+ * The Server sends the ArrayList to the Client.
  */
 @SpringBootApplication
 public class Server {
@@ -36,13 +44,6 @@ public class Server {
     private ObjectInputStream in;
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
-
-    /**
-     * The server is used to create new Users if the username is not already in use.
-     * It may also be used to store User data for subsequent uses (logins/logouts).
-     * This version of Server for the lab creates a user without checking if the
-     * username is currently in use.
-     */
 
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
@@ -68,9 +69,9 @@ public class Server {
                 user.setHighScore(request.getHighScore());
                 userRepository.save(user);
             }
-            ArrayList<UserScoreRequest> leaderBoard = new ArrayList<>();
+            ArrayList<UserScoreResponse> leaderBoard = new ArrayList<>();
             for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
-                leaderBoard.add(new UserScoreRequest(u.getUserName(), u.getHighScore()));
+                leaderBoard.add(new UserScoreResponse(u.getUserName(), u.getHighScore()));
             }
             out.writeObject(leaderBoard);
         }

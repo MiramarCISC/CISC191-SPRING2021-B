@@ -7,23 +7,23 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * This program opens a connection to a computer specified
- * as the first command-line argument.  If no command-line
- * argument is given, it prompts the user for a computer
- * to connect to.  The connection is made to
- * the port specified by LISTENING_PORT.  The program reads one
- * line of text from the connection and then closes the
- * connection.  It displays the text that it read on
- * standard output.  This program is meant to be used with
- * the server program, DateServer, which sends the current
- * date and time on the computer where the server is running.
+ * @author Joaquin Dicang
  *
- * This client, beyond the above listed capabilities, is used to
- * send and receive data from the Server pertaining to User objects.
- * For the sake of the lab, a request is sent for the User with
- * username "Brent", and without checking for validity, data for
- * a User with the username Brent and a player level of 0 is
- * returned from the Server.
+ * This program is a client used to send and receive data from the Server pertaining to User objects.
+ *
+ * When the game is launched, the player is prompted for a String userName. The Client
+ * sends a UserProfileRequest(userName) to the Server in order to see if the User is
+ * already in the database. The Client receives a UserProfileResponse containing User
+ * information, and the Client creates a User using this information in
+ * order to hold the player's data as they play the game.
+ *
+ * As the game is played, the player accumulates score for defeating enemies, which is
+ * stored and updated in an instance variable Integer score. When the game is over (the
+ * player ship collides with an enemy ship, or an enemy ship reaches the bottom of the
+ * screen), the Client sends a UserScoreRequest(userName,score) to the Server. The Client
+ * receives an ArrayList of UserScoreResponse elements, containing the top 10 Users with
+ * the highest scores in the database. The Client displays the userName and highScore
+ * of each UserScoreResponse.
  */
 
 public class Client {
@@ -36,10 +36,17 @@ public class Client {
         out = new ObjectOutputStream(clientSocket.getOutputStream());
         in = new ObjectInputStream(clientSocket.getInputStream());
 
+        /*
         out.writeObject(new UserProfileRequest("Azaxar"));
         UserProfileResponse response = (UserProfileResponse)in.readObject();
         User user = new User(response.getUserName(), response.getGamesPlayed(), response.getGameLevelsCleared(), response.getHighScore());
         System.out.println(response);
+        */
+
+        out.writeObject(new UserScoreRequest("Azaxar",20000));
+        ArrayList<UserScoreResponse> responses = (ArrayList<UserScoreResponse>)in.readObject();
+        for (UserScoreResponse response: responses)
+            System.out.println(response);
     }
 
 
