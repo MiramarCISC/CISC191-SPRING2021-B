@@ -29,11 +29,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     PlayerShip player;
     BufferedImage imgPlayer;
 
-    Boolean readyToFire, shot = false;
-    ArrayList<Point> bulletList;
-    Point bullet;
-    int[] bulletX = new int [100];
-    int[] bulletY = new int [100];
+
+    private LinkedList<Bullet> bulletList;
+    Bullet bulletHead;
     int bulletCount = 0;
 
 
@@ -61,15 +59,15 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         player.setY(playerLocation.y);
 
         //Create our player's bullet
-        bulletList = new ArrayList<>();
+        bulletList = new LinkedList<>();
         for (int i = 0; i < 100; i++) {
-            bullet = new Point(0, 0);
-            bulletList.add(bullet);
+            bulletHead = new Bullet(0,0);
+            bulletList.add(bulletHead);
         }
 
 
         //Create our enemy ship type 1
-        loadImgAlientType1();
+        loadImgAlienType1();
         randomNum = new Random();
         enemyXPos = new int[GameView_WIDTH]; //has number of elements equal to GameView's width
         enemyYPos = new int[1000];
@@ -103,48 +101,44 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     {
         super.paint(g);
 
-        //represents our player
-        g.drawImage(imgPlayer, player.getX(), player.getY(), this);
-        if (player.moveLeft == true && player.x > 0){
-            player.x -= player.getMoveSpeed();
-        }
-        if (player.moveRight == true && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15){
-            player.x += player.getMoveSpeed();
-        }
-        if (player.moveUp == true && player.y > 0){
-            player.y -= player.getMoveSpeed();
-        }
-        if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
-            player.y += player.getMoveSpeed();
-        }
-
-        //draw player's bullet
-        shoot();
-        g.setColor(Color.RED);
-        for (int i = 0; i < bulletList.size(); i++) {
-            g.fillRect(bulletList.get(i).x, bulletList.get(i).y, 2, 7);
-        }
-
-
-
-
-        //represents our enemy ship type 1
-        moveDown();
-        for (EnemyShip alien : alienType1) {
-                g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
-        }
-
-
-//g.fillOval(x,y,r,r);
-
-//        Font small = new Font("Helvetica", Font.BOLD, 14);
-//        FontMetrics metr = this.getFontMetrics(small);
-//        g.setColor(Color.black);
-//        g.setFont(small);
-//        g.drawString(message, 10, d.height-60);
-
         if (ingame) {
             // g.drawImage(img,0,0,200,200 ,null);
+            //represents our player
+            g.drawImage(imgPlayer, player.getX(), player.getY(), this);
+            if (player.moveLeft == true && player.x > 0){
+                player.x -= player.getMoveSpeed();
+            }
+            if (player.moveRight == true && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15){
+                player.x += player.getMoveSpeed();
+            }
+            if (player.moveUp == true && player.y > 0){
+                player.y -= player.getMoveSpeed();
+            }
+            if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
+                player.y += player.getMoveSpeed();
+            }
+
+            //draw player's bullet
+
+            if (bulletCount > 99)
+                bulletCount = 0;
+            if (bulletCount % 10 == 0)
+                bulletList.set(bulletCount, new Bullet(player.getX() + 25, player.getY()));
+            bulletCount++;
+            shoot();
+            g.setColor(Color.RED);
+            for (int i = 0; i < bulletList.size(); i++) {
+                g.fillRect(bulletList.get(i).getX(), bulletList.get(i).getY(), 2, 7);
+            }
+
+
+            //represents our enemy ship type 1
+            moveDown();
+            enemyHit();
+            for (int i = 0; i < alienType1.length; i++) {
+                g.drawImage(imgAlienType1, alienType1[i].getX(), alienType1[i].getY(), this);
+            }
+
         }
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
@@ -160,12 +154,19 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
-            player.moveLeft = false;
-            player.moveUp = false;
-            player.moveRight = false;
-            player.moveDown = false;
+            if(key == 37) {//left arrow
+                player.moveLeft = false;
+            }
+            if(key == 39) {//right arrow
+                player.moveRight = false;
+            }
 
-
+            if(key == 38) {//up arrow) {
+                player.moveUp = false;
+            }
+            if (key == 40) {//down arrow
+                player.moveDown = false;
+            }
         }
 
         public void keyPressed(KeyEvent e) {
@@ -187,13 +188,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             && key == 40) {//down arrow
                 player.moveDown = true;
             }
-
-            if(key==32) { //space bar
-                if (bulletCount > 99)
-                    bulletCount = 0;
-                bulletList.set(bulletCount, new Point(player.getX() + 25, player.getY()));
-                bulletCount++;
-            }
         }
     }
     public void loadImgPlayer(){
@@ -203,18 +197,37 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
 
     }
-    public void loadImgAlientType1(){
+    public void loadImgAlienType1(){
         try{
             imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
         }catch(Exception e){}
     }
 
-    public void shoot(){
+    public void shoot() {
         for (int i = 0; i < bulletList.size(); i++) {
-            Point bulletPoint = bulletList.get(i);
-            bulletPoint.setLocation(bulletPoint.getX(), bulletPoint.getY() - 10);
-            if (bulletPoint.getY() < 0)
-                bulletList.set(i, new Point(0, 0));
+            Bullet bulletPoint = bulletList.get(i);
+            bulletList.set(i, new Bullet(bulletPoint.getX(), bulletPoint.getY() - 10));
+            if (bulletPoint.getY() < 0) {
+                bulletList.set(i, new Bullet(0, 0));
+            }
+            for (int j = 0; j < alienType1.length; j++) {
+                if (alienType1[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
+                    alienType1[j].setHit(true);
+                    bulletList.remove(bulletList.get(i));
+                    Bullet bullet = new Bullet(0, 0);
+                    bulletList.add(bullet);
+                }
+            }
+        }
+    }
+    public void enemyHit(){
+        for (int i = 0; i < bulletList.size(); i++) {
+            for (int j = 0; j < alienType1.length; j++) {
+                if (alienType1[j].isHit() || alienType1[j].getY() >= GameView_HEIGHT) {
+                    alienType1[j].setY(-50);
+                    alienType1[j].setHit(false);
+                }
+            }
         }
     }
 

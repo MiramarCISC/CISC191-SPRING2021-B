@@ -58,22 +58,6 @@ public class EnemyShip extends Ship{
         this.scoreToDrop = scoreToDrop;
     }
 
-    public int getMaxHp() {
-        return maxHp;
-    }
-
-    public void setMaxHp(int maxHp) {
-        this.maxHp = maxHp;
-    }
-
-    public int getCurrentHp() {
-        return currentHp;
-    }
-
-    public void setCurrentHp(int currentHp) {
-        this.currentHp = currentHp;
-    }
-
     @Override
     public int getX() {
         return x;
