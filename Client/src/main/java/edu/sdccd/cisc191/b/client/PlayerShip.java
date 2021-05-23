@@ -8,7 +8,7 @@ public class PlayerShip extends Ship{
     private HealthBar hpView;
     private int maxHp, currentHp;
     int x, y;
-    boolean moveLeft, moveUp, moveRight, moveDown;
+    boolean moveLeft, moveUp, moveRight, moveDown, bullet;
     Rectangle hitBox;
 
     public PlayerShip(int x, int y, int maxHP, int atk){

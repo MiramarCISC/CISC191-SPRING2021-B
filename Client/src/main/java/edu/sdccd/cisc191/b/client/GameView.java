@@ -13,6 +13,7 @@ import javax.imageio.*;
 import java.awt.image.*;
 
 
+
 public class GameView  extends JPanel implements Runnable, MouseListener
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
@@ -65,6 +66,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         //create our player's bullet
         bulletList = new LinkedList<>();
+
         for (int i = 0; i < 80; i++) {
             bulletHead = new Bullet(0,0);
             bulletList.add(bulletHead);
@@ -82,8 +84,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         loadImgAlienType1();
         loadImgAlienType2();
         loadImgAlienType3();
-        enemyXPos = new int[GameView_WIDTH];
-        enemyYPos = new int[1000];
+        enemyXPos = new int[20];
+        enemyYPos = new int[20];
         aliens = new EnemyShip[20];
 
         //generates enemy ships at random positions and types above the game screen
@@ -223,43 +225,37 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
-            if(key == 37) {//left arrow
+            if(key == 37) { //left arrow
                 player.moveLeft = false;
             }
-            if(key == 39) {//right arrow
+            if(key == 39) { //right arrow
                 player.moveRight = false;
             }
 
-            if(key == 38) {//up arrow) {
+            if(key == 38) { //up arrow) {
                 player.moveUp = false;
             }
-            if (key == 40) {//down arrow
+            if (key == 40) { //down arrow
                 player.moveDown = false;
             }
         }
 
         public void keyPressed(KeyEvent e) {
-//System.out.println( e.getKeyCode());
-            // message = "Key Pressed: " + e.getKeyCode();
             int key = e.getKeyCode();
-            if(player.x > 0 && key == 37) {//left arrow
+            if(player.x > 0 && key == 37) { //left arrow
                 player.moveLeft = true;
             }
-            if(player.x < GameView_WIDTH - imgPlayer.getWidth()
-            && key == 39) {//right arrow
+            if(player.x < GameView_WIDTH - imgPlayer.getWidth() && key == 39) { //right arrow
                 player.moveRight = true;
             }
 
-            if(player.y > 0 && key == 38) {//up arrow) {
+            if(player.y > 0 && key == 38) { //up arrow
                 player.moveUp = true;
             }
-            if (player.y < GameView_HEIGHT - imgPlayer.getHeight()
-            && key == 40) {//down arrow
+            if (player.y < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
                 player.moveDown = true;
             }
-
         }//end of keyPress event
-
     }//end of class TAdapter
 
     //"loadImg" methods load associated images for each ship
@@ -287,6 +283,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }catch(Exception e){}
     }
 
+    //
     public void shoot() {
         for (int i = 0; i < bulletList.size(); i++) {
             Bullet bullet = bulletList.get(i);
