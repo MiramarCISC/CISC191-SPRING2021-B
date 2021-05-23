@@ -59,7 +59,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         loadImgPlayer();
         playerDefault = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
                                    GameView_HEIGHT - 100);
-        player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY(), 250, 10);
+        player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY());
         player.setX((int)playerDefault.getX());
         player.setY((int)playerDefault.getY());
         playerScore = 0;
