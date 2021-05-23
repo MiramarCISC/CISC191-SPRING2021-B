@@ -101,6 +101,19 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     {
         super.paint(g);
 
+
+        /*
+        Checks to see if any enemy collided with the bullet or the player
+        if so, remove enemy if hit by bullet or remove enemy and player if they collide
+         */
+        collision();
+
+        //represents our enemy ship type 1
+        moveDown();
+        for (int i = 0; i < alienType1.length; i++) {
+            g.drawImage(imgAlienType1, alienType1[i].getX(), alienType1[i].getY(), this);
+        }
+
         if (ingame) {
             // g.drawImage(img,0,0,200,200 ,null);
             //represents our player
@@ -120,7 +133,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 }
 
                 //draw player's bullet
-
                 if (bulletCount > 99)
                     bulletCount = 0;
                 if (bulletCount % 10 == 0)
@@ -131,27 +143,40 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 for (int i = 0; i < bulletList.size(); i++) {
                     g.fillRect(bulletList.get(i).getX(), bulletList.get(i).getY(), 2, 7);
                 }
-            }
-
-
-
-            //represents our enemy ship type 1
-            moveDown();
-            collision();
-            for (int i = 0; i < alienType1.length; i++) {
-                g.drawImage(imgAlienType1, alienType1[i].getX(), alienType1[i].getY(), this);
-            }
+            }else{ ingame = false; }
 
         }
+        if (ingame == false){
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Helvetica", Font.BOLD, 100));
+            g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") /2,
+                        GameView_HEIGHT / 2 - 25);
+        }
+
+        if(player.getLives() > -1){
+            //displays player's lives
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Helvetica", Font.BOLD, 15));
+            g.drawString("Lives: " + player.getLives(), 5,15);
+
+            //displays player's score
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Helvetica", Font.BOLD, 15));
+            //need a way to sum up scores from enemy and display it here
+            g.drawString("Score: ", GameView_WIDTH / 2,15);
+        }
+
+
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
-    }
+
+    }// end of paint
 
     public void moveDown(){
         for (int i = 0; i < alienType1.length; i++){
             alienType1[i].y += alienType1[i].moveSpeed;
         }
-    }
+    }// end of moveDown
 
     private class TAdapter extends KeyAdapter {
 
@@ -191,8 +216,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             && key == 40) {//down arrow
                 player.moveDown = true;
             }
-        }
-    }
+
+        }//end of keyPress event
+
+    }//end of class TAdapter
+
     public void loadImgPlayer(){
         try{
             imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
@@ -210,9 +238,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         for (int i = 0; i < bulletList.size(); i++) {
             Bullet bulletPoint = bulletList.get(i);
             bulletList.set(i, new Bullet(bulletPoint.getX(), bulletPoint.getY() - 10));
+
             if (bulletPoint.getY() < 0) {
                 bulletList.set(i, new Bullet(0, 0));
             }
+
             for (int j = 0; j < alienType1.length; j++) {
                 if (alienType1[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
                     alienType1[j].setHit(true);
@@ -222,7 +252,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 }
             }
         }
-    }
+    }//end of shoot
+
     public void collision(){
         for (int i = 0; i < bulletList.size(); i++) {
             for (int j = 0; j < alienType1.length; j++) {
@@ -232,12 +263,21 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 }
             }
         }
+
         for (int i = 0; i < alienType1.length; i++) {
             if(alienType1[i].getHitBox().intersects(player.getHitBox())){
-                player.setAlive(false);
+                alienType1[i].setY(-50);
+                player.setX(playerLocation.x);
+                player.setY(playerLocation.y);
+                player.setLives(player.getLives() - 1);
+                if (player.getLives() == 0){
+                    player.setX(-50);
+                    player.setAlive(false);
+                }
             }
         }
-    }
+
+    }//end of collision
 
     public void mousePressed(MouseEvent e) {
         int x = e.getX();
@@ -283,9 +323,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }//end while loop
 
 
-
-
     }//end of run
-
 }//end of class
 
