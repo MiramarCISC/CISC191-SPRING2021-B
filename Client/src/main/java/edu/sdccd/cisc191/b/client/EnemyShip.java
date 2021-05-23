@@ -20,22 +20,26 @@ public class EnemyShip extends Ship{
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
             moveSpeed = 2;
-            scoreToDrop = 1;
+            scoreToDrop = 3;
         }
 
         if (type == 2){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
-            moveSpeed = 4;
-            scoreToDrop = 2;
+            moveSpeed = 3;
+            scoreToDrop = 10;
         }
 
         if (type == 3){
             hpView = new HealthBar(maxHp);
             hpView = new HealthBar(currentHp);
             moveSpeed = 6;
-            scoreToDrop = 3;
+            scoreToDrop = 25;
         }
+    }
+
+    public int getType() {
+        return type;
     }
 
     public Rectangle getHitBox() {

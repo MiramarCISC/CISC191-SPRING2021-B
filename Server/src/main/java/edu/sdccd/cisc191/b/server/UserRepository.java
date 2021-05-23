@@ -14,7 +14,4 @@ public interface UserRepository extends CrudRepository<User, Long>{
 
     List<User> findTop10ByOrderByHighScoreDesc();
 
-    @Modifying
-    @Query("update User_Entity u set u.highScore = :highScore where u.userName = :userName")
-    void updateHighScore(String userName, Integer highScore);
 }
