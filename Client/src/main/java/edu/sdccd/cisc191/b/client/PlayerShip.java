@@ -51,14 +51,6 @@ public class PlayerShip extends Ship{
 
     }
 
-    public void addLives(int add){
-
-    }
-
-    public void detractLives(int detract){
-
-    }
-
     public int getX() {
         return x;
     }
@@ -75,21 +67,7 @@ public class PlayerShip extends Ship{
         this.y = y;
     }
 
-    public int getMaxHp() {
-        return maxHp;
-    }
 
-    public void setMaxHp(int maxHp) {
-        this.maxHp = maxHp;
-    }
-
-    public int getCurrentHp() {
-        return currentHp;
-    }
-
-    public void setCurrentHp(int currentHp) {
-        this.currentHp = currentHp;
-    }
 
     @Override
     public Bullet shoot() {

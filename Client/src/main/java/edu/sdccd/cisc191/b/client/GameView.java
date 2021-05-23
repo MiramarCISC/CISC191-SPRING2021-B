@@ -2,10 +2,7 @@ package edu.sdccd.cisc191.b.client;
 
 
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import javax.swing.Timer;
 import java.util.*;
 
@@ -24,6 +21,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     int GameView_WIDTH = (int) (size.getWidth() / 2);
     int GameView_HEIGHT = (int) (size.getHeight() - 35);
     private Thread animator;
+    int score = 0;
 
     Point playerLocation;
     PlayerShip player;
@@ -163,7 +161,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             g.setColor(Color.WHITE);
             g.setFont(new Font("Helvetica", Font.BOLD, 15));
             //need a way to sum up scores from enemy and display it here
-            g.drawString("Score: ", GameView_WIDTH / 2,15);
+            g.drawString("Score: " + score, GameView_WIDTH / 2,15);
         }
 
 
@@ -226,13 +224,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
         }catch(Exception e){}
 
-
-    }
+    }//end of loadImgPlayer
     public void loadImgAlienType1(){
         try{
             imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
         }catch(Exception e){}
-    }
+    }//end of loadImgAlienType1
 
     public void shoot() {
         for (int i = 0; i < bulletList.size(); i++) {
@@ -257,7 +254,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     public void collision(){
         for (int i = 0; i < bulletList.size(); i++) {
             for (int j = 0; j < alienType1.length; j++) {
-                if (alienType1[j].isHit() || alienType1[j].getY() >= GameView_HEIGHT) {
+                if (alienType1[j].isHit()) {
+                    alienType1[j].setY(-50);
+                    alienType1[j].setHit(false);
+                    score += alienType1[j].getScoreToDrop();
+                }else if(alienType1[j].getY() >= GameView_HEIGHT){
                     alienType1[j].setY(-50);
                     alienType1[j].setHit(false);
                 }
