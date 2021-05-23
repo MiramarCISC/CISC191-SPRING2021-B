@@ -36,6 +36,7 @@ public class EnemyShip extends Ship{
             moveSpeed = 6;
             scoreToDrop = 25;
         }
+        hit = false;
     }
 
     public int getType() {

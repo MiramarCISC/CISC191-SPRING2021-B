@@ -1,6 +1,5 @@
 package edu.sdccd.cisc191.b;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 public class UserScoreResponse implements Serializable {
