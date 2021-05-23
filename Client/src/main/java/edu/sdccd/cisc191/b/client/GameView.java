@@ -16,7 +16,7 @@ import java.awt.image.*;
 import java.io.*;
 
 
-public class GameView extends JPanel implements Runnable, MouseListener
+public class GameView  extends JPanel implements Runnable, MouseListener
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
     boolean ingame = true;
@@ -270,7 +270,7 @@ public class GameView extends JPanel implements Runnable, MouseListener
         int animationDelay = 17;
         long time =
                 System.currentTimeMillis();
-        while (ingame) {//infinite loop
+        while (true) {//infinite loop
             // spriteManager.update();
             repaint();
             try {
@@ -281,6 +281,9 @@ public class GameView extends JPanel implements Runnable, MouseListener
                 System.out.println(e);
             }//end catch
         }//end while loop
+
+
+
 
     }//end of run
 
