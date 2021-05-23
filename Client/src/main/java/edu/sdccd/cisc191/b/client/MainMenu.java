@@ -1,10 +1,21 @@
 package edu.sdccd.cisc191.b.client;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.Timer;
+import java.util.*;
 
-public class MainMenu extends JFrame {
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.imageio.*;
+import java.awt.image.*;
+import java.io.*;
+
+public class MainMenu{
+    /*
     private static boolean running = true;
 
     final static boolean shouldFill = true;
@@ -68,11 +79,10 @@ public class MainMenu extends JFrame {
         pane.add(button, c);
     }
 
-    /**
+
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the
      * event-dispatching thread.
-     */
     private static void createAndShowGUI() {
         //Create and set up the window.
         JFrame frame = new JFrame("GridBagLayoutDemo");
@@ -94,5 +104,15 @@ public class MainMenu extends JFrame {
                 createAndShowGUI();
             }
         });
+    }
+    */
+
+    public static void main(String args[]) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String[] fontFamilies = ge.getAvailableFontFamilyNames();
+
+        for (int i = 0; i < fontFamilies.length; i++) {
+            System.out.println(fontFamilies[i]);
+        }
     }
 }

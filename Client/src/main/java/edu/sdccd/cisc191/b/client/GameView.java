@@ -2,15 +2,16 @@ package edu.sdccd.cisc191.b.client;
 
 
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.Timer;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.*;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.imageio.*;
 import java.awt.image.*;
-import java.io.*;
+
 
 
 public class GameView  extends JPanel implements Runnable, MouseListener
@@ -21,11 +22,15 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     int GameView_WIDTH = (int) (size.getWidth() / 2);
     int GameView_HEIGHT = (int) (size.getHeight() - 35);
     private Thread animator;
-    int score = 0;
 
-    Point playerLocation;
+    BufferedImage imgLogo;
+    Point[] stars;
+
+    Point playerDefault;
     PlayerShip player;
     BufferedImage imgPlayer;
+    int playerScore;
+    User playerProfile;
 
 
     private LinkedList<Bullet> bulletList;
@@ -36,8 +41,10 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     Random randomNum;
     int[] enemyXPos;
     int[] enemyYPos;
-    EnemyShip[] alienType1;
+    EnemyShip[] aliens;
     BufferedImage imgAlienType1;
+    BufferedImage imgAlienType2;
+    BufferedImage imgAlienType3;
 
 
     public GameView()
@@ -48,43 +55,42 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         d = new Dimension(GameView_WIDTH, GameView_HEIGHT);
         setBackground(Color.black);
 
-        //Create our player object and set its x and y coordinates
+        //creates our player object and sets its position to the bottom middle of the screen
         loadImgPlayer();
-        playerLocation = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
+        playerDefault = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
                                    GameView_HEIGHT - 100);
-        player = new PlayerShip(playerLocation.x, playerLocation.y, 250, 10);
-        player.setX(playerLocation.x);
-        player.setY(playerLocation.y);
+        player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY(), 250, 10);
+        player.setX((int)playerDefault.getX());
+        player.setY((int)playerDefault.getY());
+        playerScore = 0;
 
-        //Create our player's bullet
+        //create our player's bullet
         bulletList = new LinkedList<>();
-        for (int i = 0; i < 100; i++) {
+
+        for (int i = 0; i < 80; i++) {
             bulletHead = new Bullet(0,0);
             bulletList.add(bulletHead);
         }
 
-
-        //Create our enemy ship type 1
-        loadImgAlienType1();
         randomNum = new Random();
-        enemyXPos = new int[GameView_WIDTH]; //has number of elements equal to GameView's width
-        enemyYPos = new int[1000];
-        alienType1 = new EnemyShip[100];
-        int[] random = new int[1000]; //holds the positive number elements
 
-        //set x and y coordinate for each type 1 enemy ship
-        for (int x = 0; x < enemyXPos.length; x++) {
-            enemyXPos[x] = randomNum.nextInt(GameView_WIDTH - imgAlienType1.getWidth());
-        }
-        for (int y = 0; y < enemyYPos.length; y++){
-            random[y] = randomNum.nextInt(1000);
-
-            //this will set the y positions over the top of the screen
-            enemyYPos[y] = random[y] * -1;
+        //creates background stars
+        stars = new Point[100];
+        for (int i = 0; i < stars.length; i++) {
+            stars[i] = new Point(randomNum.nextInt(GameView_WIDTH - 60), randomNum.nextInt(1000));
         }
 
-        for(int i = 0; i < alienType1.length; i++){
-            alienType1[i] = new EnemyShip(enemyXPos[i], enemyYPos[i], 1);
+        //setup for creating enemy ships
+        loadImgAlienType1();
+        loadImgAlienType2();
+        loadImgAlienType3();
+        enemyXPos = new int[20];
+        enemyYPos = new int[20];
+        aliens = new EnemyShip[20];
+
+        //generates enemy ships at random positions and types above the game screen
+        for(int i = 0; i < aliens.length; i++){
+            createShip(i);
         }
 
 
@@ -106,17 +112,38 @@ public class GameView  extends JPanel implements Runnable, MouseListener
          */
         collision();
 
-        //represents our enemy ship type 1
-        moveDown();
-        for (int i = 0; i < alienType1.length; i++) {
-            g.drawImage(imgAlienType1, alienType1[i].getX(), alienType1[i].getY(), this);
+        //represents our enemy ships
+        move();
+        for (EnemyShip alien: aliens) {
+
+            //draws enemy ship depending on its type
+            int type = alien.getType();
+            if (type == 1) {
+                g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
+            }
+            if (type == 2) {
+                g.drawImage(imgAlienType2, alien.getX(), alien.getY(), this);
+            }
+            if (type == 3) {
+                g.drawImage(imgAlienType3, alien.getX(), alien.getY(), this);
+            }
+
         }
 
+        for (Point p: stars){
+            g.setColor(new Color(107, 107, 107));
+            g.fillOval((int)p.getX(), (int)p.getY(), 3, (int)(Math.random()*5 + 1));
+        }
+
+        //dictates in-game behavior
         if (ingame) {
+
             // g.drawImage(img,0,0,200,200 ,null);
             //represents our player
             if(player.isAlive()){
-                g.drawImage(imgPlayer, player.getX(), player.getY(), this);
+
+                //checks for movement and draws the player ship
+                //g.drawImage(imgPlayer, player.getX(), player.getY(), this);
                 if (player.moveLeft == true && player.x > 0){
                     player.x -= player.getMoveSpeed();
                 }
@@ -129,24 +156,37 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
                     player.y += player.getMoveSpeed();
                 }
+                g.drawImage(imgPlayer, player.getX(), player.getY(), this);
 
                 //draw player's bullet
-                if (bulletCount > 99)
+                //  if bulletCount increments up to 100, reset it to 0
+                if (bulletCount > 79)
                     bulletCount = 0;
-                if (bulletCount % 10 == 0)
+
+                //  artificial frequency of shooting bullets
+                if (bulletCount % 8 == 0)
                     bulletList.set(bulletCount, new Bullet(player.getX() + 25, player.getY()));
                 bulletCount++;
+
+                //  paints all bullets after they've been shot
                 shoot();
                 g.setColor(Color.RED);
-                for (int i = 0; i < bulletList.size(); i++) {
-                    g.fillRect(bulletList.get(i).getX(), bulletList.get(i).getY(), 2, 7);
+                for (Bullet b: bulletList) {
+                    g.fillRect(b.getX(), b.getY(), 2, 7);
                 }
-            }else{ ingame = false; }
+            }
+
+            //if the player loses all their lives, the game ends
+            else{ ingame = false; }
 
         }
+
+        //dictates post-game behavior
         if (ingame == false){
+
+            //displays the "Game Over" text if player runs out of lives
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Helvetica", Font.BOLD, 100));
+            g.setFont(new Font("Gameplay", Font.PLAIN, 100));
             g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") /2,
                         GameView_HEIGHT / 2 - 25);
         }
@@ -154,14 +194,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         if(player.getLives() > -1){
             //displays player's lives
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Helvetica", Font.BOLD, 15));
+            g.setFont(new Font("Gameplay", Font.PLAIN, 15));
             g.drawString("Lives: " + player.getLives(), 5,15);
 
             //displays player's score
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Helvetica", Font.BOLD, 15));
-            //need a way to sum up scores from enemy and display it here
-            g.drawString("Score: " + score, GameView_WIDTH / 2,15);
+            g.drawString("Score: " + playerScore, GameView_WIDTH / 2,15);
         }
 
 
@@ -170,82 +208,103 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     }// end of paint
 
-    public void moveDown(){
-        for (int i = 0; i < alienType1.length; i++){
-            alienType1[i].y += alienType1[i].moveSpeed;
+    public void move(){
+
+        //moves all aliens down according to their moveSpeed
+        for (int i = 0; i < aliens.length; i++){
+            aliens[i].y += aliens[i].moveSpeed;
         }
-    }// end of moveDown
+
+        //moves all stars up one pixel
+        for (int i = 0; i < stars.length; i++){
+            stars[i].setLocation(stars[i].getX(), stars[i].getY() - 1);
+        }
+    }// end of move
 
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
-            if(key == 37) {//left arrow
+            if(key == 37) { //left arrow
                 player.moveLeft = false;
             }
-            if(key == 39) {//right arrow
+            if(key == 39) { //right arrow
                 player.moveRight = false;
             }
 
-            if(key == 38) {//up arrow) {
+            if(key == 38) { //up arrow) {
                 player.moveUp = false;
             }
-            if (key == 40) {//down arrow
+            if (key == 40) { //down arrow
                 player.moveDown = false;
             }
         }
 
         public void keyPressed(KeyEvent e) {
-//System.out.println( e.getKeyCode());
-            // message = "Key Pressed: " + e.getKeyCode();
             int key = e.getKeyCode();
-            if(player.x > 0 && key == 37) {//left arrow
+            if(player.x > 0 && key == 37) { //left arrow
                 player.moveLeft = true;
             }
-            if(player.x < GameView_WIDTH - imgPlayer.getWidth()
-            && key == 39) {//right arrow
+            if(player.x < GameView_WIDTH - imgPlayer.getWidth() && key == 39) { //right arrow
                 player.moveRight = true;
             }
 
-            if(player.y > 0 && key == 38) {//up arrow) {
+            if(player.y > 0 && key == 38) { //up arrow
                 player.moveUp = true;
             }
-            if (player.y < GameView_HEIGHT - imgPlayer.getHeight()
-            && key == 40) {//down arrow
+            if (player.y < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
                 player.moveDown = true;
             }
-
         }//end of keyPress event
-
     }//end of class TAdapter
 
+    //"loadImg" methods load associated images for each ship
     public void loadImgPlayer(){
         try{
             imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
         }catch(Exception e){}
+    }
 
-    }//end of loadImgPlayer
     public void loadImgAlienType1(){
         try{
             imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
         }catch(Exception e){}
-    }//end of loadImgAlienType1
+    }
 
+    public void loadImgAlienType2(){
+        try{
+            imgAlienType2 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType2.png"));
+        }catch(Exception e){}
+    }
+
+    public void loadImgAlienType3(){
+        try{
+            imgAlienType3 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType3.png"));
+        }catch(Exception e){}
+    }
+
+    //
     public void shoot() {
         for (int i = 0; i < bulletList.size(); i++) {
-            Bullet bulletPoint = bulletList.get(i);
-            bulletList.set(i, new Bullet(bulletPoint.getX(), bulletPoint.getY() - 10));
+            Bullet bullet = bulletList.get(i);
 
-            if (bulletPoint.getY() < 0) {
-                bulletList.set(i, new Bullet(0, 0));
+            //moves all bullets forward
+            bulletList.set(i, new Bullet(bullet.getX(), bullet.getY() - 10));
+
+            //if a bullet is above the game screen, store a new bullet off screen
+            if (bullet.getY() < 0) {
+                bulletList.remove(bulletList.get(i));
+                Bullet newBullet = new Bullet(-1, -7);
+                bulletList.add(newBullet);
             }
 
-            for (int j = 0; j < alienType1.length; j++) {
-                if (alienType1[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
-                    alienType1[j].setHit(true);
+            //if a bullet hits an enemy ship, set that enemy ship's hit status to true, and store a new bullet off screen
+            for (int j = 0; j < aliens.length; j++) {
+                if (aliens[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
+                    aliens[j].setHit(true);
                     bulletList.remove(bulletList.get(i));
-                    Bullet bullet = new Bullet(0, 0);
-                    bulletList.add(bullet);
+                    Bullet newBullet = new Bullet(-1, -7);
+                    bulletList.add(newBullet);
                 }
             }
         }
@@ -253,24 +312,30 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     public void collision(){
         for (int i = 0; i < bulletList.size(); i++) {
-            for (int j = 0; j < alienType1.length; j++) {
-                if (alienType1[j].isHit()) {
-                    alienType1[j].setY(-50);
-                    alienType1[j].setHit(false);
-                    score += alienType1[j].getScoreToDrop();
-                }else if(alienType1[j].getY() >= GameView_HEIGHT){
-                    alienType1[j].setY(-50);
-                    alienType1[j].setHit(false);
+            for (int j = 0; j < aliens.length; j++) {
+
+                //"eliminates" a hit enemy ship by creating a new one above the game screen and incrementing score
+                if (aliens[j].isHit()) {
+                    playerScore += aliens[j].getScoreToDrop();
+                    createShip(j);
+                }
+
+                //creates a new enemy ship above the game screen if the enemy ship travels below the game screen
+                else if(aliens[j].getY() >= GameView_HEIGHT){
+                    createShip(j);
                 }
             }
         }
 
-        for (int i = 0; i < alienType1.length; i++) {
-            if(alienType1[i].getHitBox().intersects(player.getHitBox())){
-                alienType1[i].setY(-50);
-                player.setX(playerLocation.x);
-                player.setY(playerLocation.y);
-                player.setLives(player.getLives() - 1);
+        //if an enemy ship collides with the player,
+        //player loses a life and is set to the default position
+        //and a new enemy ship is created above the game screen
+        for (int i = 0; i < aliens.length; i++) {
+            if(aliens[i].getHitBox().intersects(player.getHitBox())){
+                createShip(i);
+                player.setX(playerDefault.x);
+                player.setY(playerDefault.y);
+                player.decrementLives();
                 if (player.getLives() == 0){
                     player.setX(-50);
                     player.setAlive(false);
@@ -278,30 +343,46 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
         }
 
+        //if a star travels above the game screen, sets it at a random position below the game screen
+        for (int i = 0; i < stars.length; i++){
+            if (stars[i].getY() < 0){
+                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), GameView_HEIGHT);
+            }
+        }
     }//end of collision
 
-    public void mousePressed(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
+    //generates a new enemy ship at a given index with a random position and type
+    public void createShip(int index){
 
-    }
+        //sets random x and y positions
+        enemyXPos[index] = randomNum.nextInt(GameView_WIDTH - 60);
+        enemyYPos[index] = randomNum.nextInt(1000) * -1;
 
-    public void mouseReleased(MouseEvent e) {
+        //probability system for creating certain types of ships
+        int shipType = (int)(Math.random()*100 + 1);
 
-    }
+        //75% probability of creating a Type 1 enemy ship
+        if (shipType >= 1 && shipType <= 75)
+            aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 1);
 
-    public void mouseEntered(MouseEvent e) {
+        //20% probability of creating a Type 2 enemy ship
+        else if (shipType > 75 && shipType <= 95)
+            aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 2);
 
-    }
+        //5% probability of creating a Type 3 enemy ship
+        else if (shipType > 95)
+            aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 3);
+    }//end of createShip
 
-    public void mouseExited(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {}
 
-    }
+    public void mouseReleased(MouseEvent e) {}
 
-    public void mouseClicked(MouseEvent e) {
+    public void mouseEntered(MouseEvent e) {}
 
-    }
+    public void mouseExited(MouseEvent e) {}
 
+    public void mouseClicked(MouseEvent e) {}
 
     public void run() {
 
@@ -322,8 +403,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 System.out.println(e);
             }//end catch
         }//end while loop
-
-
     }//end of run
 }//end of class
 

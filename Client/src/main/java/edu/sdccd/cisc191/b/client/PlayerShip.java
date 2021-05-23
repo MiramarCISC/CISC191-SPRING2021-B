@@ -8,13 +8,13 @@ public class PlayerShip extends Ship{
     private HealthBar hpView;
     private int maxHp, currentHp;
     int x, y;
-    boolean moveLeft, moveUp, moveRight, moveDown;
+    boolean moveLeft, moveUp, moveRight, moveDown, bullet;
     Rectangle hitBox;
 
     public PlayerShip(int x, int y, int maxHP, int atk){
         super(x,y, maxHP,atk);
         lives = 3;
-        moveSpeed = 5;
+        moveSpeed = 4;
         this.maxHp = maxHP;
         currentHp = maxHP;
         hpView = new HealthBar(maxHP);
@@ -51,6 +51,14 @@ public class PlayerShip extends Ship{
 
     }
 
+    public void addLives(int add){
+
+    }
+
+    public void decrementLives(){
+        lives--;
+    }
+
     public int getX() {
         return x;
     }
@@ -66,9 +74,6 @@ public class PlayerShip extends Ship{
     public void setY(int y) {
         this.y = y;
     }
-
-
-
     @Override
     public Bullet shoot() {
         return new Bullet(getX(),getY());
