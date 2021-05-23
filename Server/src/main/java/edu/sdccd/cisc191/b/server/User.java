@@ -36,11 +36,11 @@ public class User{
         return String.format("User[id=%d, userName='%s', highScore=%d]", id, userName, highScore);
     }
 
-    public String getName() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setName(String name) {
+    public void setUserName(String name) {
         this.userName = name;
     }
 
