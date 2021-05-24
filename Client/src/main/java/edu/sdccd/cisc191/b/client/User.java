@@ -1,31 +1,31 @@
 package edu.sdccd.cisc191.b.client;
 
-import java.util.*;
+/**
+ * The User class defines User objects to be used as "profiles" for our game.
+ *
+ * @author Joaquin Dicang
+ */
 
 public class User implements Comparable<User>{
     private String userName;
     private int gamesPlayed;
-    private int gameLevelsCleared;
     private int highScore;
 
     public User(String name) {
         this.userName = name;
         gamesPlayed = 0;
-        gameLevelsCleared = 0;
         highScore = 0;
     }
 
     public User(String name, int highScore) {
         this.userName = name;
         gamesPlayed = 0;
-        gameLevelsCleared = 0;
         this.highScore = highScore;
     }
 
-    public User(String name, int gamesPlayed, int gameLevelsCleared, int highScore) {
+    public User(String name, int gamesPlayed, int highScore) {
         this.userName = name;
         this.gamesPlayed = gamesPlayed;
-        this.gameLevelsCleared = gameLevelsCleared;
         this.highScore = highScore;
     }
 
@@ -33,24 +33,8 @@ public class User implements Comparable<User>{
         return userName;
     }
 
-    public void setUserName(String name) {
-        this.userName = name;
-    }
-
-    public int getGamesPlayed() {
-        return gamesPlayed;
-    }
-
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
-    }
-
-    public int getGameLevelsCleared() {
-        return gameLevelsCleared;
-    }
-
-    public void setGameLevelsCleared(int gameLevelsCleared) {
-        this.gameLevelsCleared = gameLevelsCleared;
     }
 
     public int getHighScore() {
