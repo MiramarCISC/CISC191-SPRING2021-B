@@ -15,6 +15,7 @@ import java.awt.image.*;
  * The GameView program provides the main player controls and visuals for the "Battle X Armada"
  * arcade-shooter-style game.
  *
+ *
  */
 
 public class GameView  extends JPanel implements Runnable, MouseListener
@@ -135,8 +136,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
             g.setColor(Color.white);
             g.setFont(new Font("Gameplay", Font.PLAIN, 10));
-            g.drawString("Created by: Joaquin Dicang, Kim Lim, Sholehani Hafezi, Shubham Joshi, and Maria Lourdes Thomas",
-                    5, GameView_HEIGHT - 50);
+            g.drawString("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas",
+                    GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas")/2,
+                    GameView_HEIGHT - 43);
         }
 
         if (started) {
