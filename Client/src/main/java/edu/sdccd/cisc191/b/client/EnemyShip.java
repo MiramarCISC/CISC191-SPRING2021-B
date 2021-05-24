@@ -31,6 +31,26 @@ public class EnemyShip extends Ship{
         hit = false;
     }
 
+    @Override
+    public int getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public int getType() {
         return type;
     }
@@ -51,9 +71,4 @@ public class EnemyShip extends Ship{
         return scoreToDrop;
     }
 
-    @Override
-    public Bullet shoot(){
-
-        return null;
-    }
 }

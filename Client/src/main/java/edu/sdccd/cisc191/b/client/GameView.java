@@ -112,8 +112,10 @@ public class GameView  extends JPanel implements Runnable, MouseListener
          */
         collision();
 
-        //represents our enemy ships
+        //moves bullets and enemies
         move();
+
+        //represents our enemy ships
         for (EnemyShip alien: aliens) {
 
             //draws enemy ship depending on its type
@@ -159,17 +161,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.drawImage(imgPlayer, player.getX(), player.getY(), this);
 
                 //draw player's bullet
-                //  if bulletCount increments up to 100, reset it to 0
-                if (bulletCount > 79)
-                    bulletCount = 0;
-
-                //  artificial frequency of shooting bullets
-                if (bulletCount % 8 == 0)
-                    bulletList.set(bulletCount, new Bullet(player.getX() + 25, player.getY()));
-                bulletCount++;
-
-                //  paints all bullets after they've been shot
-                shoot();
                 g.setColor(Color.RED);
                 for (Bullet b: bulletList) {
                     g.fillRect(b.getX(), b.getY(), 2, 7);
@@ -210,6 +201,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     public void move(){
 
+        //moves all bullets forward
+        for(int i = 0; i < bulletList.size(); ++i) {
+            bulletList.set(i, new Bullet(bulletList.get(i).getX(), bulletList.get(i).getY() - 10));
+        }
+
         //moves all aliens down according to their moveSpeed
         for (int i = 0; i < aliens.length; i++){
             aliens[i].y += aliens[i].moveSpeed;
@@ -238,6 +234,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             if (key == 40) { //down arrow
                 player.moveDown = false;
             }
+            if(key == 32) { // space bar
+                player.bullet = false;
+            }
         }
 
         public void keyPressed(KeyEvent e) {
@@ -254,6 +253,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
             if (player.y < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
                 player.moveDown = true;
+            }
+            if(key == 32){
+                if(player.bullet == false) {
+                    player.bullet = true;
+                    shoot();
+                }
             }
         }//end of keyPress event
     }//end of class TAdapter
@@ -283,49 +288,60 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }catch(Exception e){}
     }
 
-    //
+
     public void shoot() {
+        //add a new bullet to the bullet list
+        Bullet newBullet = new Bullet(player.getX() + 25, player.getY());
+        bulletList.add(newBullet);
+        if(bulletList.size() == 1) {
+            bulletHead = bulletList.get(0);
+        }
+
+
         for (int i = 0; i < bulletList.size(); i++) {
             Bullet bullet = bulletList.get(i);
-
-            //moves all bullets forward
-            bulletList.set(i, new Bullet(bullet.getX(), bullet.getY() - 10));
 
             //if a bullet is above the game screen, store a new bullet off screen
             if (bullet.getY() < 0) {
                 bulletList.remove(bulletList.get(i));
-                Bullet newBullet = new Bullet(-1, -7);
-                bulletList.add(newBullet);
+
             }
 
-            //if a bullet hits an enemy ship, set that enemy ship's hit status to true, and store a new bullet off screen
-            for (int j = 0; j < aliens.length; j++) {
-                if (aliens[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
-                    aliens[j].setHit(true);
-                    bulletList.remove(bulletList.get(i));
-                    Bullet newBullet = new Bullet(-1, -7);
-                    bulletList.add(newBullet);
-                }
-            }
+
         }
     }//end of shoot
 
     public void collision(){
+
+        //if a bullet hits an enemy ship, set that enemy ship's hit status to true, and store a new bullet off screen
         for (int i = 0; i < bulletList.size(); i++) {
             for (int j = 0; j < aliens.length; j++) {
-
-                //"eliminates" a hit enemy ship by creating a new one above the game screen and incrementing score
-                if (aliens[j].isHit()) {
-                    playerScore += aliens[j].getScoreToDrop();
-                    createShip(j);
+                if (i != bulletList.size()) {
+                    if (aliens[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
+                        aliens[j].setHit(true);
+                        bulletList.remove(bulletList.get(i));
+                    }
                 }
-
-                //creates a new enemy ship above the game screen if the enemy ship travels below the game screen
-                else if(aliens[j].getY() >= GameView_HEIGHT){
-                    createShip(j);
+                else if(i>=1){
+                    i--;
                 }
             }
         }
+
+        //check if any enemy ships have been bit by bullets
+        for (int j = 0; j < aliens.length; j++) {
+            //"eliminates" a hit enemy ship by creating a new one above the game screen and incrementing score
+            if (aliens[j].isHit()) {
+                playerScore += aliens[j].getScoreToDrop();
+                createShip(j);
+            }
+
+            //creates a new enemy ship above the game screen if the enemy ship travels below the game screen
+            else if(aliens[j].getY() >= GameView_HEIGHT){
+                createShip(j);
+            }
+        }
+
 
         //if an enemy ship collides with the player,
         //player loses a life and is set to the default position
