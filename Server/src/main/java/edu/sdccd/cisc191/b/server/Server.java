@@ -1,65 +1,79 @@
 package edu.sdccd.cisc191.b.server;
 
+import edu.sdccd.cisc191.b.UserProfileRequest;
+import edu.sdccd.cisc191.b.UserProfileResponse;
+import edu.sdccd.cisc191.b.UserScoreRequest;
+import edu.sdccd.cisc191.b.UserScoreResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import edu.sdccd.cisc191.b.UserDataRequest;
-import edu.sdccd.cisc191.b.UserDataResponse;
 import org.springframework.context.annotation.Bean;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
- * This program is a server that takes connection requests on
- * the port specified by the constant LISTENING_PORT.  When a
- * connection is opened, the program sends the current time to
- * the connected socket.  The program will continue to receive
- * and process connections until it is killed (by a CONTROL-C,
- * for example).  Note that this server processes each connection
- * as it is received, rather than creating a separate thread
- * to process the connection.
+ * @author Joaquin Dicang
+ *
+ * This program is a server used to send and receive data from the Client pertaining to User objects.
+ *
+ * When the game is launched, the Server receives a UserProfileRequest(userName) from
+ * the Client containing a String userName. The Server finds a User in the database
+ * with userName, and a User does not exist, the Server creates a User with userName
+ * and saves it to the database. The Server sends a UserProfileResponse containing the
+ * found or created User information to the Client.
+ *
+ * As the game is played, the player accumulates score for defeating enemies, which is
+ * stored and updated in an instance variable Integer score. When the game is over (the
+ * player ship collides with an enemy ship, or an enemy ship reaches the bottom of the
+ * screen), the Server receives a UserScoreRequest(userName,score) from the Client. The
+ * Server finds a User using userName, and compares the score from the request to the
+ * highScore in the database; if the score is higher, the User in the database is updated
+ * with the higher score. The Server finds the top 10 Users with the highest scores, and
+ * translates the List of User elements into an ArrayList of UserScoreResponse elements.
+ * The Server sends the ArrayList to the Client.
  */
 @SpringBootApplication
 public class Server {
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
-
-    /**
-     * The server is used to create new Users if the username is not already in use.
-     * It may also be used to store User data for subsequent uses (logins/logouts).
-     * This version of Server for the lab creates a user without checking if the
-     * username is currently in use.
-     */
 
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
         clientSocket = serverSocket.accept();
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        out = new ObjectOutputStream(clientSocket.getOutputStream());
+        in = new ObjectInputStream(clientSocket.getInputStream());
 
-        userRepository.save(new User("Azaxar", 10000));
-        userRepository.save(new User("ikimdaryl", 18000));
-        userRepository.save(new User("ahuang", 99999));
-        userRepository.save(new User("Salami", 9000));
-        userRepository.save(new User("xXNoobSlayerXx", 0));
-
-        for (User use : userRepository.findTop6ByOrderByHighScoreDesc()) {
-            log.info(use.toString());
+        Object requestObject = in.readObject();
+        if (requestObject instanceof UserProfileRequest) {
+            UserProfileRequest request = (UserProfileRequest) requestObject;
+            User user = userRepository.findByUserName(request.getUserName());
+            if (user == null) {
+                user = new User(request.getUserName());
+                userRepository.save(user);
+            }
+            UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getGameLevelsCleared(), user.getHighScore());
+            out.writeObject(response);
         }
-        log.info("");
-
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            UserDataRequest request = UserDataRequest.fromJSON(inputLine);
-            UserDataResponse response = new UserDataResponse(0, request.getUsername());
-            out.println(UserDataResponse.toJSON(response));
+        else if (requestObject instanceof UserScoreRequest) {
+            UserScoreRequest request = (UserScoreRequest) requestObject;
+            User user = userRepository.findByUserName(request.getUserName());
+            if (request.getHighScore() > user.getHighScore()) {
+                user.setHighScore(request.getHighScore());
+                userRepository.save(user);
+            }
+            ArrayList<UserScoreResponse> leaderBoard = new ArrayList<>();
+            for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
+                leaderBoard.add(new UserScoreResponse(u.getUserName(), u.getHighScore()));
+            }
+            out.writeObject(leaderBoard);
         }
     }
 

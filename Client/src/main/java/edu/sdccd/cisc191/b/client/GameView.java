@@ -1,17 +1,22 @@
 package edu.sdccd.cisc191.b.client;
 
-
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.Timer;
-import java.util.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
-import javax.swing.ImageIcon;
+import java.util.*;
 import javax.swing.JPanel;
 import javax.imageio.*;
 import java.awt.image.*;
-import java.io.*;
 
+/**
+ * The GameView program provides the main player controls and visuals for the "Battle X Armada"
+ * arcade-shooter-style game.
+ *
+ *
+ */
 
 public class GameView  extends JPanel implements Runnable, MouseListener
 {
@@ -21,24 +26,28 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     int GameView_WIDTH = (int) (size.getWidth() / 2);
     int GameView_HEIGHT = (int) (size.getHeight() - 35);
     private Thread animator;
-    int score = 0;
 
-    Point playerLocation;
+    BufferedImage imgLogo;
+    Point[] stars;
+    boolean login = false;
+    boolean started = true;
+
+    Point playerDefault;
     PlayerShip player;
     BufferedImage imgPlayer;
-
+    int playerScore;
+    User playerProfile;
 
     private LinkedList<Bullet> bulletList;
     Bullet bulletHead;
-    int bulletCount = 0;
-
 
     Random randomNum;
     int[] enemyXPos;
     int[] enemyYPos;
-    EnemyShip[] alienType1;
+    EnemyShip[] aliens;
     BufferedImage imgAlienType1;
-
+    BufferedImage imgAlienType2;
+    BufferedImage imgAlienType3;
 
     public GameView()
     {
@@ -48,45 +57,46 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         d = new Dimension(GameView_WIDTH, GameView_HEIGHT);
         setBackground(Color.black);
 
-        //Create our player object and set its x and y coordinates
-        loadImgPlayer();
-        playerLocation = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
-                                   GameView_HEIGHT - 100);
-        player = new PlayerShip(playerLocation.x, playerLocation.y, 250, 10);
-        player.setX(playerLocation.x);
-        player.setY(playerLocation.y);
+        //setup for the login screen
+        loadImgLogo();
 
-        //Create our player's bullet
+        //creates our player ship object and sets its position to the bottom middle of the screen (default position)
+        loadImgPlayer();
+        playerDefault = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
+                                   GameView_HEIGHT - 100);
+        player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY());
+        player.setX((int)playerDefault.getX());
+        player.setY((int)playerDefault.getY());
+        playerScore = 0;
+
+        //creates our player's bullets
         bulletList = new LinkedList<>();
-        for (int i = 0; i < 100; i++) {
+
+        for (int i = 0; i < 80; i++) {
             bulletHead = new Bullet(0,0);
             bulletList.add(bulletHead);
         }
 
-
-        //Create our enemy ship type 1
-        loadImgAlienType1();
         randomNum = new Random();
-        enemyXPos = new int[GameView_WIDTH]; //has number of elements equal to GameView's width
-        enemyYPos = new int[1000];
-        alienType1 = new EnemyShip[100];
-        int[] random = new int[1000]; //holds the positive number elements
 
-        //set x and y coordinate for each type 1 enemy ship
-        for (int x = 0; x < enemyXPos.length; x++) {
-            enemyXPos[x] = randomNum.nextInt(GameView_WIDTH - imgAlienType1.getWidth());
-        }
-        for (int y = 0; y < enemyYPos.length; y++){
-            random[y] = randomNum.nextInt(1000);
-
-            //this will set the y positions over the top of the screen
-            enemyYPos[y] = random[y] * -1;
+        //creates background stars
+        stars = new Point[100];
+        for (int i = 0; i < stars.length; i++) {
+            stars[i] = new Point(randomNum.nextInt(GameView_WIDTH - 60), randomNum.nextInt(1000));
         }
 
-        for(int i = 0; i < alienType1.length; i++){
-            alienType1[i] = new EnemyShip(enemyXPos[i], enemyYPos[i], 1);
-        }
+        //setup for creating enemy ships
+        loadImgAlienType1();
+        loadImgAlienType2();
+        loadImgAlienType3();
+        enemyXPos = new int[20];
+        enemyYPos = new int[20];
+        aliens = new EnemyShip[20];
 
+        //generates enemy ships at random positions and types above the game screen
+        for(int i = 0; i < aliens.length; i++){
+            createShip(i);
+        }
 
         if (animator == null || !ingame) {
             animator = new Thread(this);
@@ -95,213 +105,383 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         setDoubleBuffered(true);
     }
 
+    /**
+     * This is the method that updates the state of every visual in the game, from Ships to the score,
+     * to even the stars in the background. paint() is repeatedly called in GameView's run() method.
+     *
+     * While playing:
+     *      paint() checks for the states of objects using collision(), and moves objects using move().
+     *      The enemy ships and header details ("Lives:" and "Score:") are drawn
+     *        regardless of the status of the ingame boolean.
+     *      If ingame is true, paint() checks for movement then draws the player, along with any active
+     *        bullets, if the player is alive. If the player is no longer alive, ingame is set to false.
+     *      If ingame is false, "Game Over" is painted along with the leaderboard. The player is given
+     *        the option to play again or quit.
+     */
     public void paint(Graphics g)
     {
         super.paint(g);
 
+        //checks the status of background stars and moves them up
+        //stars are present no matter what "screen" GameView is on
+        updateStars();
 
-        /*
-        Checks to see if any enemy collided with the bullet or the player
-        if so, remove enemy if hit by bullet or remove enemy and player if they collide
-         */
-        collision();
-
-        //represents our enemy ship type 1
-        moveDown();
-        for (int i = 0; i < alienType1.length; i++) {
-            g.drawImage(imgAlienType1, alienType1[i].getX(), alienType1[i].getY(), this);
+        //  draws background stars
+        for (Point p: stars){
+            g.setColor(new Color(107, 107, 107));
+            g.fillOval((int)p.getX(), (int)p.getY(), 3, (int)(Math.random()*5 + 1));
         }
 
-        if (ingame) {
-            // g.drawImage(img,0,0,200,200 ,null);
-            //represents our player
-            if(player.isAlive()){
-                g.drawImage(imgPlayer, player.getX(), player.getY(), this);
-                if (player.moveLeft == true && player.x > 0){
-                    player.x -= player.getMoveSpeed();
-                }
-                if (player.moveRight == true && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15){
-                    player.x += player.getMoveSpeed();
-                }
-                if (player.moveUp == true && player.y > 0){
-                    player.y -= player.getMoveSpeed();
-                }
-                if (player.moveDown == true && player.y < GameView_HEIGHT - imgPlayer.getHeight() -30){
-                    player.y += player.getMoveSpeed();
-                }
-
-                //draw player's bullet
-                if (bulletCount > 99)
-                    bulletCount = 0;
-                if (bulletCount % 10 == 0)
-                    bulletList.set(bulletCount, new Bullet(player.getX() + 25, player.getY()));
-                bulletCount++;
-                shoot();
-                g.setColor(Color.RED);
-                for (int i = 0; i < bulletList.size(); i++) {
-                    g.fillRect(bulletList.get(i).getX(), bulletList.get(i).getY(), 2, 7);
-                }
-            }else{ ingame = false; }
-
-        }
-        if (ingame == false){
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Helvetica", Font.BOLD, 100));
-            g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") /2,
-                        GameView_HEIGHT / 2 - 25);
+        if (login) {
+            g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
+            g.setColor(Color.white);
+            g.setFont(new Font("Gameplay", Font.PLAIN, 10));
+            g.drawString("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas",
+                    GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas")/2,
+                    GameView_HEIGHT - 43);
         }
 
-        if(player.getLives() > -1){
-            //displays player's lives
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Helvetica", Font.BOLD, 15));
-            g.drawString("Lives: " + player.getLives(), 5,15);
+        if (started) {
 
-            //displays player's score
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Helvetica", Font.BOLD, 15));
-            //need a way to sum up scores from enemy and display it here
-            g.drawString("Score: " + score, GameView_WIDTH / 2,15);
-        }
+            //represents header details
+            //  header details display even after the player loses, to show the final values of lives and score
+            if (player.getLives() > -1) {
+                g.setColor(Color.WHITE);
 
+                //displays player's lives
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("Lives: " + player.getLives(), 5, 15);
+
+                //displays player's score
+                g.drawString("Score: " + playerScore, GameView_WIDTH / 2, 15);
+            }
+
+            //dictates in-game behavior
+            if (ingame) {
+
+                //checks the states of any objects in the game and alters objects or lists appropriately
+                collision();
+
+                //moves bullets, enemies, and stars
+                move();
+
+                //represents our enemy ships
+                for (EnemyShip alien : aliens) {
+
+                    //draws enemy ships depending on their type
+                    int type = alien.getType();
+                    if (type == 1) {
+                        g.drawImage(imgAlienType1, alien.getX(), alien.getY(), this);
+                    }
+                    if (type == 2) {
+                        g.drawImage(imgAlienType2, alien.getX(), alien.getY(), this);
+                    }
+                    if (type == 3) {
+                        g.drawImage(imgAlienType3, alien.getX(), alien.getY(), this);
+                    }
+                }
+
+                //represents our player
+                if (player.isAlive()) {
+
+                    //checks for movement and draws the player ship
+                    //g.drawImage(imgPlayer, player.getX(), player.getY(), this);
+                    if (player.moveLeft && player.x > 0) {
+                        player.x -= player.getMoveSpeed();
+                    }
+                    if (player.moveRight && player.x < GameView_WIDTH - imgPlayer.getWidth() - 15) {
+                        player.x += player.getMoveSpeed();
+                    }
+                    if (player.moveUp && player.y > 0) {
+                        player.y -= player.getMoveSpeed();
+                    }
+                    if (player.moveDown && player.y < GameView_HEIGHT - imgPlayer.getHeight() - 30) {
+                        player.y += player.getMoveSpeed();
+                    }
+                    g.drawImage(imgPlayer, player.getX(), player.getY(), this);
+
+                    //draws player's bullet
+                    g.setColor(Color.RED);
+                    for (Bullet b : bulletList) {
+                        g.fillRect(b.getX(), b.getY(), 2, 7);
+                    }
+                }
+
+                //if the player loses all 3 lives, the game ends
+                else {
+                    ingame = false;
+                }
+
+            }
+
+            //dictates post-game behavior
+            if (!ingame) {
+
+                //displays the "Game Over" text if player runs out of lives
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 100));
+                g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") / 2,
+                        150);
+
+                g.setColor(Color.white);
+                g.drawRect(GameView_WIDTH / 4 - 3, 190, GameView_WIDTH / 2, 230);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 20));
+                g.drawString("Leaderboard", GameView_WIDTH / 4,
+                        210);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("1. ", GameView_WIDTH / 4, 230);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("2. ", GameView_WIDTH / 4, 250);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("3. ", GameView_WIDTH / 4, 270);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("4. ", GameView_WIDTH / 4, 290);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("5. ", GameView_WIDTH / 4, 310);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("6. ", GameView_WIDTH / 4, 330);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("7. ", GameView_WIDTH / 4, 350);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("8. ", GameView_WIDTH / 4, 370);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("9. ", GameView_WIDTH / 4, 390);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("10. ", GameView_WIDTH / 4, 410);
+            }
+        }//end of if(started)
 
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
 
     }// end of paint
 
-    public void moveDown(){
-        for (int i = 0; i < alienType1.length; i++){
-            alienType1[i].y += alienType1[i].moveSpeed;
-        }
-    }// end of moveDown
-
     private class TAdapter extends KeyAdapter {
 
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
-            if(key == 37) {//left arrow
+            if(key == 37) { //left arrow
                 player.moveLeft = false;
             }
-            if(key == 39) {//right arrow
+            if(key == 39) { //right arrow
                 player.moveRight = false;
             }
 
-            if(key == 38) {//up arrow) {
+            if(key == 38) { //up arrow) {
                 player.moveUp = false;
             }
-            if (key == 40) {//down arrow
+            if (key == 40) { //down arrow
                 player.moveDown = false;
+            }
+            if(key == 32) { // space bar
+                player.bullet = false;
             }
         }
 
         public void keyPressed(KeyEvent e) {
-//System.out.println( e.getKeyCode());
-            // message = "Key Pressed: " + e.getKeyCode();
             int key = e.getKeyCode();
-            if(player.x > 0 && key == 37) {//left arrow
+            if(player.x > 0 && key == 37) { //left arrow
                 player.moveLeft = true;
             }
-            if(player.x < GameView_WIDTH - imgPlayer.getWidth()
-            && key == 39) {//right arrow
+            if(player.x < GameView_WIDTH - imgPlayer.getWidth() && key == 39) { //right arrow
                 player.moveRight = true;
             }
 
-            if(player.y > 0 && key == 38) {//up arrow) {
+            if(player.y > 0 && key == 38) { //up arrow
                 player.moveUp = true;
             }
-            if (player.y < GameView_HEIGHT - imgPlayer.getHeight()
-            && key == 40) {//down arrow
+            if (player.y < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
                 player.moveDown = true;
             }
-
+            if(key == 32){
+                if(!player.bullet) {
+                    player.bullet = true;
+                    shoot();
+                }
+            }
         }//end of keyPress event
-
     }//end of class TAdapter
 
-    public void loadImgPlayer(){
-        try{
-            imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
-        }catch(Exception e){}
+    //"loadImg" methods load associated images for the game
+    public void loadImgLogo() {
+        try {
+            imgLogo = ImageIO.read(this.getClass().getResourceAsStream("/BxA Logo.png"));
+        } catch(Exception e) {}
+    }
 
-    }//end of loadImgPlayer
-    public void loadImgAlienType1(){
-        try{
+    public void loadImgPlayer() {
+        try {
+            imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
+        } catch(Exception e){}
+    }
+
+    public void loadImgAlienType1() {
+        try {
             imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
-        }catch(Exception e){}
-    }//end of loadImgAlienType1
+        } catch(Exception e) {}
+    }
+
+    public void loadImgAlienType2() {
+        try {
+            imgAlienType2 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType2.png"));
+        } catch(Exception e) {}
+    }
+
+    public void loadImgAlienType3() {
+        try {
+            imgAlienType3 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType3.png"));
+        } catch(Exception e) {}
+    }
 
     public void shoot() {
+
+        //add a new bullet to the bullet list
+        Bullet newBullet = new Bullet(player.getX() + 25, player.getY());
+        bulletList.add(newBullet);
+        if (bulletList.size() == 1) {
+            bulletHead = bulletList.get(0);
+        }
+
         for (int i = 0; i < bulletList.size(); i++) {
-            Bullet bulletPoint = bulletList.get(i);
-            bulletList.set(i, new Bullet(bulletPoint.getX(), bulletPoint.getY() - 10));
+            Bullet bullet = bulletList.get(i);
 
-            if (bulletPoint.getY() < 0) {
-                bulletList.set(i, new Bullet(0, 0));
-            }
-
-            for (int j = 0; j < alienType1.length; j++) {
-                if (alienType1[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
-                    alienType1[j].setHit(true);
-                    bulletList.remove(bulletList.get(i));
-                    Bullet bullet = new Bullet(0, 0);
-                    bulletList.add(bullet);
-                }
+            //if a bullet is above the game screen, store a new bullet off screen
+            if (bullet.getY() < 0) {
+                bulletList.remove(bulletList.get(i));
             }
         }
     }//end of shoot
 
-    public void collision(){
+    public void move(){
+
+        //moves all bullets forward
+        for(int i = 0; i < bulletList.size(); ++i) {
+            bulletList.set(i, new Bullet(bulletList.get(i).getX(), bulletList.get(i).getY() - 10));
+        }
+
+        //moves all aliens down according to their moveSpeed
+        for (int i = 0; i < aliens.length; i++){
+            aliens[i].y += aliens[i].moveSpeed;
+        }
+    }// end of move
+
+    public void collision() {
+
+        //if a bullet hits an enemy ship, set that enemy ship's hit status to true, and store a new bullet off screen
         for (int i = 0; i < bulletList.size(); i++) {
-            for (int j = 0; j < alienType1.length; j++) {
-                if (alienType1[j].isHit()) {
-                    alienType1[j].setY(-50);
-                    alienType1[j].setHit(false);
-                    score += alienType1[j].getScoreToDrop();
-                }else if(alienType1[j].getY() >= GameView_HEIGHT){
-                    alienType1[j].setY(-50);
-                    alienType1[j].setHit(false);
+            for (int j = 0; j < aliens.length; j++) {
+                if (i != bulletList.size()) {
+                    if (aliens[j].getHitBox().intersects(bulletList.get(i).getHitBox())) {
+                        aliens[j].setHit(true);
+                        bulletList.remove(bulletList.get(i));
+                    }
+                }
+                else if (i>=1) {
+                    i--;
                 }
             }
         }
 
-        for (int i = 0; i < alienType1.length; i++) {
-            if(alienType1[i].getHitBox().intersects(player.getHitBox())){
-                alienType1[i].setY(-50);
-                player.setX(playerLocation.x);
-                player.setY(playerLocation.y);
-                player.setLives(player.getLives() - 1);
-                if (player.getLives() == 0){
+        //check if any enemy ships have been bit by bullets
+        for (int j = 0; j < aliens.length; j++) {
+            //"eliminates" a hit enemy ship by creating a new one above the game screen and incrementing score
+            if (aliens[j].isHit()) {
+                playerScore += aliens[j].getScoreToDrop();
+                createShip(j);
+            }
+
+            //creates a new enemy ship above the game screen if the enemy ship travels below the game screen
+            else if (aliens[j].getY() >= GameView_HEIGHT) {
+                createShip(j);
+            }
+        }
+
+        //if an enemy ship collides with the player,
+        //player loses a life and is set to the default position
+        //and a new enemy ship is created above the game screen
+        for (int i = 0; i < aliens.length; i++) {
+            if (aliens[i].getHitBox().intersects(player.getHitBox())) {
+                createShip(i);
+                player.setX(playerDefault.x);
+                player.setY(playerDefault.y);
+                player.decrementLives();
+                if (player.getLives() == 0) {
                     player.setX(-50);
                     player.setAlive(false);
                 }
             }
         }
-
     }//end of collision
 
-    public void mousePressed(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
+    //generates a new enemy ship at a given index with a random position and type
+    public void createShip(int index) {
 
-    }
+        //sets random x and y positions
+        enemyXPos[index] = randomNum.nextInt(GameView_WIDTH - 60);
+        enemyYPos[index] = randomNum.nextInt(1000) * -1;
 
-    public void mouseReleased(MouseEvent e) {
+        //probability system for creating certain types of ships
+        int shipType = (int)(Math.random()*100 + 1);
 
-    }
+        //75% probability of creating a Type 1 enemy ship
+        if (shipType >= 1 && shipType <= 75)
+            aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 1);
 
-    public void mouseEntered(MouseEvent e) {
+        //20% probability of creating a Type 2 enemy ship
+        else if (shipType > 75 && shipType <= 95)
+            aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 2);
 
-    }
+        //5% probability of creating a Type 3 enemy ship
+        else if (shipType > 95)
+            aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 3);
+    }//end of createShip
 
-    public void mouseExited(MouseEvent e) {
+    public void updateStars() {
 
-    }
+        //if a star travels above the game screen, sets it at a random position below the game screen
+        for (int i = 0; i < stars.length; i++) {
+            if (stars[i].getY() < 0)
+                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), GameView_HEIGHT);
+        }
 
-    public void mouseClicked(MouseEvent e) {
+        //moves all stars up one pixel
+        for (int i = 0; i < stars.length; i++){
+            stars[i].setLocation(stars[i].getX(), stars[i].getY() - 1);
+        }
+    }//end of updateStars
 
-    }
+    //the mouse is not used, except to interact with buttons
+    public void mousePressed(MouseEvent e) {}
 
+    public void mouseReleased(MouseEvent e) {}
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {}
+
+    public void mouseClicked(MouseEvent e) {}
 
     public void run() {
 
@@ -318,12 +498,10 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 time += animationDelay;
                 Thread.sleep(Math.max(0,time -
                         System.currentTimeMillis()));
-            }catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 System.out.println(e);
             }//end catch
         }//end while loop
-
-
     }//end of run
 }//end of class
 

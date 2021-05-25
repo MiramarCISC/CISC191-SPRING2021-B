@@ -1,49 +1,40 @@
 package edu.sdccd.cisc191.b.client;
 
-import java.util.*;
+/**
+ * The User class defines User objects to be used as "profiles" for our game.
+ *
+ * @author Joaquin Dicang
+ */
 
 public class User implements Comparable<User>{
-    private String name;
+    private String userName;
     private int gamesPlayed;
-    private int gameLevelsCleared;
     private int highScore;
 
     public User(String name) {
-        this.name = name;
+        this.userName = name;
         gamesPlayed = 0;
-        gameLevelsCleared = 0;
         highScore = 0;
     }
 
     public User(String name, int highScore) {
-        this.name = name;
+        this.userName = name;
         gamesPlayed = 0;
-        gameLevelsCleared = 0;
-        this.highScore = 0;
+        this.highScore = highScore;
     }
 
-    public String getName() {
-        return name;
+    public User(String name, int gamesPlayed, int highScore) {
+        this.userName = name;
+        this.gamesPlayed = gamesPlayed;
+        this.highScore = highScore;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getGamesPlayed() {
-        return gamesPlayed;
+    public String getUserName() {
+        return userName;
     }
 
     public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
-    }
-
-    public int getGameLevelsCleared() {
-        return gameLevelsCleared;
-    }
-
-    public void setGameLevelsCleared(int gameLevelsCleared) {
-        this.gameLevelsCleared = gameLevelsCleared;
     }
 
     public int getHighScore() {
@@ -63,6 +54,6 @@ public class User implements Comparable<User>{
         else if (thisHigh < high)
             return -1;
         else
-            return this.name.compareTo(user.name);
+            return this.userName.compareTo(user.userName);
     }
 }
