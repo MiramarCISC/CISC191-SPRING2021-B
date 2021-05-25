@@ -16,17 +16,17 @@ public class EnemyShip extends Ship{
         this.type = type;
         if (type == 1){
             moveSpeed = 2;
-            scoreToDrop = 3;
+            scoreToDrop = 7;
         }
 
         if (type == 2){
-            moveSpeed = 3;
-            scoreToDrop = 10;
+            moveSpeed = 4;
+            scoreToDrop = 15;
         }
 
         if (type == 3){
             moveSpeed = 6;
-            scoreToDrop = 25;
+            scoreToDrop = 35;
         }
         hit = false;
     }

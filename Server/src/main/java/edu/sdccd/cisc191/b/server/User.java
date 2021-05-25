@@ -52,14 +52,6 @@ public class User{
         this.gamesPlayed = gamesPlayed;
     }
 
-    public int getGameLevelsCleared() {
-        return gameLevelsCleared;
-    }
-
-    public void setGameLevelsCleared(int gameLevelsCleared) {
-        this.gameLevelsCleared = gameLevelsCleared;
-    }
-
     public int getHighScore() {
         return highScore;
     }
