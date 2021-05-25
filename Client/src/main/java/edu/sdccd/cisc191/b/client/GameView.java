@@ -259,10 +259,51 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 100));
                 g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") / 2,
-                        GameView_HEIGHT / 2 - 25);
+                        GameView_HEIGHT/4);
+
+                //draws title of the leaderboard
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("Leaderboard", (GameView_WIDTH/2) - g.getFontMetrics().stringWidth("Leaderboard")/2,
+                        GameView_HEIGHT/4 + 150);
+
+                String user1 = String.format("%.20s","Azaxar");
+                int score1 = 12345;
 
 
-            }
+                //PLACEHOLDERS for top 10 highscores
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 20));
+
+                //TODO: Make sure this doesn't blow up with networking
+                for (int i = 0; i < 10; i++) {
+                    //UserScoreResponse r = leaderBoard.get(i - 1);
+                    if (i > 0) {
+
+                        g.drawString(user1, GameView_WIDTH / 4, GameView_HEIGHT/4 + 190 + (25 * i));
+                        g.drawString(String.format("%d", score1),
+                                ((GameView_WIDTH / 4) * 3) - g.getFontMetrics().stringWidth(score1 + ""),
+                                GameView_HEIGHT/4 + 190 + (25 * i));
+                    }
+                }
+
+                //Displays "Would you like to play again? prompt and instructions"
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("Would you like to play again?", GameView_WIDTH / 2
+                                - g.getFontMetrics().stringWidth("Would you like to play again?") / 2,
+                        (GameView_HEIGHT/4)*3);
+
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("Press Y to play again",
+                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press Y to play again") / 2,
+                        (GameView_HEIGHT/4)*3 + 40);
+                g.drawString("Press N to exit",
+                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press N to exit") / 2,
+                        (GameView_HEIGHT/4)*3 + 60);
+
+
+
+            }//end of if(ingame)
         }//end of if(started)
 
         Toolkit.getDefaultToolkit().sync();
@@ -348,10 +389,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (key == 10){
 
                     //checks if the entered name is the appropriate length, then "logs in"
-                    if (playerName.length() > 3 && playerName.length() <= 15) {
+                    if (playerName.length() > 2 && playerName.length() <= 15) {
 
                         /*
-                        //TODO: contact server and send name to log in
+                        //contact server and send name to log in
+                        //TODO: make sure this doesn't blow up with networking
                         Thread sendName = new Thread( () -> { loginRequest(playerName); } );
                         sendName.start();
                         while (sendName.isAlive()) {
@@ -371,7 +413,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     }
 
                     //if the entered name is not long enough, flag to print a warning on the screen
-                    if (playerName.length() < 4) {
+                    if (playerName.length() < 3) {
                         loginWarning = true;
                     }
                 }
@@ -525,6 +567,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     player.setX(-50);
                     player.setAlive(false);
 
+                    /*
                     Thread sendRequest = new Thread( () -> { leaderBoardRequest(playerName, playerScore); } );
                     sendRequest.start();
                     while (sendRequest.isAlive()) {
@@ -532,6 +575,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                             sendRequest.join();
                         } catch(InterruptedException e) { e.printStackTrace(); }
                     }
+                    */
                 }
             }//end of outer if
         }//end of for
