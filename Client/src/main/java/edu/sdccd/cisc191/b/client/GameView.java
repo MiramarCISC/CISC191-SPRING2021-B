@@ -270,6 +270,24 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("10. ", GameView_WIDTH / 4, 410);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("Would you like to play", GameView_WIDTH / 2
+                                - g.getFontMetrics().stringWidth("Would you like to play") / 2,
+                        450);
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("again?", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("again") / 2,
+                        490);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("Yes", GameView_WIDTH / 4, 550);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("No", 430, 550);
             }
         }//end of if(started)
 
