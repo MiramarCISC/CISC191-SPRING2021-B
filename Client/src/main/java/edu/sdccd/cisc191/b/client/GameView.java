@@ -21,7 +21,7 @@ import java.awt.image.*;
 public class GameView  extends JPanel implements Runnable, MouseListener
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
-    boolean ingame = false;
+    boolean ingame = true;
     private Dimension d;
     int GameView_WIDTH = (int) (size.getWidth() / 2);
     int GameView_HEIGHT = (int) (size.getHeight() - 35);
@@ -197,6 +197,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (player.isAlive()) {
 
                     //checks for movement and draws the player ship
+                    //g.drawImage(imgPlayer, player.getX(), player.getY(), this);
                     if (player.moveLeft && player.x > 0) {
                         player.x -= player.getMoveSpeed();
                     }
@@ -232,8 +233,150 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 100));
                 g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") / 2,
-                        GameView_HEIGHT / 2 - 25);
-            }
+                        150);
+
+
+                //draws a square to encompass the leaderboard
+                g.setColor(Color.white);
+                g.drawRect(GameView_WIDTH / 4 - 3, 190, GameView_WIDTH / 2, 230);
+
+                //Title of the leaderboard
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 20));
+                g.drawString("Leaderboard", GameView_WIDTH / 4,
+                        210);
+
+
+
+                String user1 = String.format("%.20s","Azaxar");
+                int score1 = 12345;
+
+
+                //Placeholders for top 10 highscores
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("1. " + user1, GameView_WIDTH / 4, 230);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 230);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("2. " + String.format("%-20s",user1), GameView_WIDTH / 4, 250);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 250);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("3. " + String.format("%-20s",user1), GameView_WIDTH / 4, 270);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 270);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("4. " + String.format("%-20s",user1), GameView_WIDTH / 4, 290);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 290);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("5. " + String.format("%-20s",user1), GameView_WIDTH / 4, 310);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 310);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("6. " + String.format("%-20s",user1), GameView_WIDTH / 4, 330);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 330);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("7. " + String.format("%-20s",user1), GameView_WIDTH / 4, 350);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 350);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("8. " + String.format("%-20s",user1), GameView_WIDTH / 4, 370);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 370);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("9. " + String.format("%-20s",user1), GameView_WIDTH / 4, 390);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 390);
+                //}
+
+                //{
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("10. " + String.format("%-20s",user1), GameView_WIDTH / 4, 410);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 410);
+                //}
+
+
+                //Displays "Would you like to play again? Yes / No?"
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("Would you like to play", GameView_WIDTH / 2
+                                - g.getFontMetrics().stringWidth("Would you like to play") / 2,
+                        450);
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("again?", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("again") / 2,
+                        490);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("Yes", GameView_WIDTH / 4, 550);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+                g.drawString("No", 430, 550);
+
+
+
+
+            }//end of if(ingame)
         }//end of if(started)
 
         Toolkit.getDefaultToolkit().sync();
@@ -498,15 +641,15 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     public void updateStars() {
 
-        //if a star travels below the game screen, sets it at a random position above the game screen
+        //if a star travels above the game screen, sets it at a random position below the game screen
         for (int i = 0; i < stars.length; i++) {
-            if (stars[i].getY() > GameView_HEIGHT + 1)
-                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), - 1);
+            if (stars[i].getY() < 0)
+                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), GameView_HEIGHT);
         }
 
-        //moves all stars down
+        //moves all stars up one pixel
         for (int i = 0; i < stars.length; i++){
-            stars[i].setLocation(stars[i].getX(), stars[i].getY() + 1);
+            stars[i].setLocation(stars[i].getX(), stars[i].getY() - 1);
         }
     }//end of updateStars
 
