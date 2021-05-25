@@ -265,25 +265,18 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setFont(new Font("Gameplay", Font.PLAIN, 30));
                 g.drawString("Leaderboard", (GameView_WIDTH/2) - g.getFontMetrics().stringWidth("Leaderboard")/2,
                         GameView_HEIGHT/4 + 150);
+                g.drawLine(GameView_WIDTH/5, GameView_HEIGHT/4 + 155, (GameView_WIDTH/5)*4, GameView_HEIGHT/4 + 155);
 
-                String user1 = String.format("%.20s","Azaxar");
-                int score1 = 12345;
-
-
-                //PLACEHOLDERS for top 10 highscores
+                //draws top 10 highscores and player names
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 20));
-
                 //TODO: Make sure this doesn't blow up with networking
-                for (int i = 0; i < 10; i++) {
-                    //UserScoreResponse r = leaderBoard.get(i - 1);
-                    if (i > 0) {
-
-                        g.drawString(user1, GameView_WIDTH / 4, GameView_HEIGHT/4 + 190 + (25 * i));
-                        g.drawString(String.format("%d", score1),
-                                ((GameView_WIDTH / 4) * 3) - g.getFontMetrics().stringWidth(score1 + ""),
-                                GameView_HEIGHT/4 + 190 + (25 * i));
-                    }
+                for (int i = 0; i < leaderBoard.size(); i++) {
+                    UserScoreResponse r = leaderBoard.get(i);
+                    g.drawString(r.getUserName(), GameView_WIDTH / 5, GameView_HEIGHT/4 + 190 + (25 * i));
+                    g.drawString(String.format("%d", r.getHighScore()),
+                            ((GameView_WIDTH / 5) * 4) - g.getFontMetrics().stringWidth(r.getHighScore() + ""),
+                            GameView_HEIGHT/4 + 190 + (25 * i));
                 }
 
                 //Displays "Would you like to play again? prompt and instructions"
@@ -348,27 +341,27 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (key == 67){ if (playerName.length() < 15) playerName += "C"; }
                 if (key == 68){ if (playerName.length() < 15) playerName += "D"; }
                 if (key == 69){ if (playerName.length() < 15) playerName += "E"; }
-                if (key == 70){ if (playerName.length() < 15) playerName += "f"; }
-                if (key == 71){ if (playerName.length() < 15) playerName += "g"; }
-                if (key == 72){ if (playerName.length() < 15) playerName += "h"; }
-                if (key == 73){ if (playerName.length() < 15) playerName += "i"; }
-                if (key == 74){ if (playerName.length() < 15) playerName += "j"; }
-                if (key == 75){ if (playerName.length() < 15) playerName += "k"; }
-                if (key == 76){ if (playerName.length() < 15) playerName += "l"; }
-                if (key == 77){ if (playerName.length() < 15) playerName += "m"; }
-                if (key == 78){ if (playerName.length() < 15) playerName += "n"; }
-                if (key == 79){ if (playerName.length() < 15) playerName += "o"; }
-                if (key == 80){ if (playerName.length() < 15) playerName += "p"; }
-                if (key == 81){ if (playerName.length() < 15) playerName += "q"; }
-                if (key == 82){ if (playerName.length() < 15) playerName += "r"; }
-                if (key == 83){ if (playerName.length() < 15) playerName += "s"; } //I'm so sorry -Joaquin
-                if (key == 84){ if (playerName.length() < 15) playerName += "t"; }
-                if (key == 85){ if (playerName.length() < 15) playerName += "u"; }
-                if (key == 86){ if (playerName.length() < 15) playerName += "v"; }
-                if (key == 87){ if (playerName.length() < 15) playerName += "w"; }
-                if (key == 88){ if (playerName.length() < 15) playerName += "x"; }
-                if (key == 89){ if (playerName.length() < 15) playerName += "y"; }
-                if (key == 90){ if (playerName.length() < 15) playerName += "z"; }
+                if (key == 70){ if (playerName.length() < 15) playerName += "F"; }
+                if (key == 71){ if (playerName.length() < 15) playerName += "G"; }
+                if (key == 72){ if (playerName.length() < 15) playerName += "H"; }
+                if (key == 73){ if (playerName.length() < 15) playerName += "I"; }
+                if (key == 74){ if (playerName.length() < 15) playerName += "J"; }
+                if (key == 75){ if (playerName.length() < 15) playerName += "K"; }
+                if (key == 76){ if (playerName.length() < 15) playerName += "L"; }
+                if (key == 77){ if (playerName.length() < 15) playerName += "M"; }
+                if (key == 78){ if (playerName.length() < 15) playerName += "N"; }
+                if (key == 79){ if (playerName.length() < 15) playerName += "O"; }
+                if (key == 80){ if (playerName.length() < 15) playerName += "P"; }
+                if (key == 81){ if (playerName.length() < 15) playerName += "Q"; }
+                if (key == 82){ if (playerName.length() < 15) playerName += "R"; }
+                if (key == 83){ if (playerName.length() < 15) playerName += "S"; } //I'm so sorry -Joaquin
+                if (key == 84){ if (playerName.length() < 15) playerName += "T"; }
+                if (key == 85){ if (playerName.length() < 15) playerName += "U"; }
+                if (key == 86){ if (playerName.length() < 15) playerName += "V"; }
+                if (key == 87){ if (playerName.length() < 15) playerName += "W"; }
+                if (key == 88){ if (playerName.length() < 15) playerName += "X"; }
+                if (key == 89){ if (playerName.length() < 15) playerName += "Y"; }
+                if (key == 90){ if (playerName.length() < 15) playerName += "Z"; }
                 if (key == 48){ if (playerName.length() < 15) playerName += "0"; }
                 if (key == 49){ if (playerName.length() < 15) playerName += "1"; }
                 if (key == 50){ if (playerName.length() < 15) playerName += "2"; }
@@ -391,7 +384,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     //checks if the entered name is the appropriate length, then "logs in"
                     if (playerName.length() > 2 && playerName.length() <= 15) {
 
-                        /*
+
                         //contact server and send name to log in
                         //TODO: make sure this doesn't blow up with networking
                         Thread sendName = new Thread( () -> { loginRequest(playerName); } );
@@ -401,7 +394,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                                 sendName.join();
                             } catch(InterruptedException ex) {ex.printStackTrace();}
                         }
-                        */
 
                         //turn off intro screen
                         login = false;
@@ -444,7 +436,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
 
             if(started && !ingame) {
-                if (key == 10) {
+                if (key == 89) {
                     resetGame();
                     player.setAlive(true);
                     ingame = true;
@@ -567,7 +559,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     player.setX(-50);
                     player.setAlive(false);
 
-                    /*
                     Thread sendRequest = new Thread( () -> { leaderBoardRequest(playerName, playerScore); } );
                     sendRequest.start();
                     while (sendRequest.isAlive()) {
@@ -575,7 +566,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                             sendRequest.join();
                         } catch(InterruptedException e) { e.printStackTrace(); }
                     }
-                    */
+
                 }
             }//end of outer if
         }//end of for
@@ -637,6 +628,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         for(int i = 0; i < aliens.length; i++){
             createShip(i);
         }
+
+        //resets leaderboard
+        leaderBoard = new ArrayList<>();
     }
 
     public void startConnection(String ip, int port) throws Exception {
@@ -674,7 +668,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
             //start a connection with the server, then send a UserScoreRequest
             startConnection("127.0.0.1", 4444);
-            out.writeObject(new UserScoreRequest("Azaxar",20000));
+            out.writeObject(new UserScoreRequest(playerName, playerScore));
 
             //receive an ArrayList<UserScoreResponse> of the 10 highest scores, then stop the connection
             ArrayList<UserScoreResponse> users = (ArrayList<UserScoreResponse>)in.readObject();

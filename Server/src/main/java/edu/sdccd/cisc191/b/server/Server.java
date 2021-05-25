@@ -47,34 +47,46 @@ public class Server {
 
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
-        clientSocket = serverSocket.accept();
-        out = new ObjectOutputStream(clientSocket.getOutputStream());
-        in = new ObjectInputStream(clientSocket.getInputStream());
 
-        Object requestObject = in.readObject();
-        if (requestObject instanceof UserProfileRequest) {
-            UserProfileRequest request = (UserProfileRequest) requestObject;
-            User user = userRepository.findByUserName(request.getUserName());
-            if (user == null) {
-                user = new User(request.getUserName());
-                userRepository.save(user);
-            }
-            UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getHighScore());
-            out.writeObject(response);
-        }
-        else if (requestObject instanceof UserScoreRequest) {
-            UserScoreRequest request = (UserScoreRequest) requestObject;
-            User user = userRepository.findByUserName(request.getUserName());
-            if (request.getHighScore() > user.getHighScore()) {
-                user.setHighScore(request.getHighScore());
-            }
-            user.setGamesPlayed(user.getGamesPlayed() + 1);
-            userRepository.save(user);
-            ArrayList<UserScoreResponse> leaderBoard = new ArrayList<>();
-            for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
-                leaderBoard.add(new UserScoreResponse(u.getUserName(), u.getHighScore()));
-            }
-            out.writeObject(leaderBoard);
+        while (true) {
+            clientSocket = serverSocket.accept();
+
+            new Thread(() -> {
+                try {
+                    out = new ObjectOutputStream(clientSocket.getOutputStream());
+                    in = new ObjectInputStream(clientSocket.getInputStream());
+
+                    Object requestObject = in.readObject();
+                    if (requestObject instanceof UserProfileRequest) {
+                        UserProfileRequest request = (UserProfileRequest) requestObject;
+                        log.info("UserProfileRequest received: " + request);
+                        User user = userRepository.findByUserName(request.getUserName());
+                        if (user == null) {
+                            user = new User(request.getUserName());
+                            userRepository.save(user);
+                        }
+                        UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getHighScore());
+                        out.writeObject(response);
+                        log.info("UserProfileResponse sent: " + response);
+                    }
+                    else if (requestObject instanceof UserScoreRequest) {
+                        UserScoreRequest request = (UserScoreRequest) requestObject;
+                        log.info("UserScoreRequest received: " + request);
+                        User user = userRepository.findByUserName(request.getUserName());
+                        if (request.getHighScore() > user.getHighScore()) {
+                            user.setHighScore(request.getHighScore());
+                        }
+                        user.setGamesPlayed(user.getGamesPlayed() + 1);
+                        userRepository.save(user);
+                        ArrayList<UserScoreResponse> leaderBoard = new ArrayList<>();
+                        for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
+                            leaderBoard.add(new UserScoreResponse(u.getUserName(), u.getHighScore()));
+                        }
+                        out.writeObject(leaderBoard);
+                        for (UserScoreResponse r : leaderBoard) log.info("UserScoreResponse sent: " + r);
+                    }
+                } catch (Exception e) { e.printStackTrace(); }
+            }).start();
         }
     }
 
