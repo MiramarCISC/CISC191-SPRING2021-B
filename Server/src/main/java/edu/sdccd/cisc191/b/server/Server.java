@@ -59,7 +59,7 @@ public class Server {
                 user = new User(request.getUserName());
                 userRepository.save(user);
             }
-            UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getGameLevelsCleared(), user.getHighScore());
+            UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getHighScore());
             out.writeObject(response);
         }
         else if (requestObject instanceof UserScoreRequest) {
@@ -67,8 +67,9 @@ public class Server {
             User user = userRepository.findByUserName(request.getUserName());
             if (request.getHighScore() > user.getHighScore()) {
                 user.setHighScore(request.getHighScore());
-                userRepository.save(user);
             }
+            user.setGamesPlayed(user.getGamesPlayed() + 1);
+            userRepository.save(user);
             ArrayList<UserScoreResponse> leaderBoard = new ArrayList<>();
             for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
                 leaderBoard.add(new UserScoreResponse(u.getUserName(), u.getHighScore()));

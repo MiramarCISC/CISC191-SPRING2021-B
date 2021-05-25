@@ -1,11 +1,18 @@
 package edu.sdccd.cisc191.b.client;
 
+import edu.sdccd.cisc191.b.UserProfileRequest;
+import edu.sdccd.cisc191.b.UserProfileResponse;
+import edu.sdccd.cisc191.b.UserScoreRequest;
+import edu.sdccd.cisc191.b.UserScoreResponse;
+
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import java.io.*;
+import java.net.Socket;
 import java.util.*;
 import javax.swing.JPanel;
 import javax.imageio.*;
@@ -30,6 +37,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     BufferedImage imgLogo;
     Point[] stars;
     boolean login = true;
+    boolean loginWarning = false;
     boolean started = false;
     int cursorCount = 0;
 
@@ -39,6 +47,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     int playerScore;
     User playerProfile;
     String playerName = "";
+    ArrayList<UserScoreResponse> leaderBoard;
 
     private LinkedList<Bullet> bulletList;
     Bullet bulletHead;
@@ -50,6 +59,10 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     BufferedImage imgAlienType1;
     BufferedImage imgAlienType2;
     BufferedImage imgAlienType3;
+
+    private Socket clientSocket;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
     public GameView()
     {
@@ -100,6 +113,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             createShip(i);
         }
 
+        leaderBoard = new ArrayList<>();
+
         if (animator == null || !ingame) {
             animator = new Thread(this);
             animator.start();
@@ -135,14 +150,29 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
 
         if (login) {
+
+            //draws the "Battle X Armada" logo; blame Joaquin for how bad it looks
+            //graphic design is my passion
             g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
             g.setColor(Color.white);
 
+            //draw name prompt text
             g.setFont(new Font("Gameplay", Font.PLAIN, 20));
             g.drawString("Enter your name to begin", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Enter your name to begin")/2,
                     (GameView_HEIGHT/4)*3);
             g.drawString(playerName, GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName)/2,
                     (GameView_HEIGHT/4)*3 + 30);
+            g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+            g.drawString("Name can only be numbers and letters", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Name can only be numbers and letters")/2,
+                    (GameView_HEIGHT/4)*3 + 55);
+
+            //draw warning text if a name is too long or too short
+            if (loginWarning) {
+                g.setColor(Color.red);
+                g.drawString("Name must be at least 3 characters long", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Name must be at least 3 characters long")/2,
+                        (GameView_HEIGHT/4)*3 + 75);
+                g.setColor(Color.white);
+            }
 
             g.setFont(new Font("Gameplay", Font.PLAIN, 12));
             g.drawString("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas",
@@ -219,10 +249,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 }
 
                 //if the player loses all 3 lives, the game ends
-                else {
-                    ingame = false;
-                }
-
+                else { ingame = false; }
             }
 
             //dictates post-game behavior
@@ -233,6 +260,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setFont(new Font("Gameplay", Font.PLAIN, 100));
                 g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") / 2,
                         GameView_HEIGHT / 2 - 25);
+
+
             }
         }//end of if(started)
 
@@ -271,55 +300,79 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
             //inputs to get the player's name before the game starts
             if (login) {
-                if (key == 65){ playerName += "A"; }
-                if (key == 66){ playerName += "B"; }
-                if (key == 67){ playerName += "C"; }
-                if (key == 68){ playerName += "D"; }
-                if (key == 69){ playerName += "E"; }
-                if (key == 70){ playerName += "f"; }
-                if (key == 71){ playerName += "g"; }
-                if (key == 72){ playerName += "h"; }
-                if (key == 73){ playerName += "i"; }
-                if (key == 74){ playerName += "j"; }
-                if (key == 75){ playerName += "k"; }
-                if (key == 76){ playerName += "l"; }
-                if (key == 77){ playerName += "m"; }
-                if (key == 78){ playerName += "n"; }
-                if (key == 79){ playerName += "o"; }
-                if (key == 80){ playerName += "p"; }
-                if (key == 81){ playerName += "q"; }
-                if (key == 82){ playerName += "r"; }
-                if (key == 83){ playerName += "s"; } //I'm so sorry -Joaquin
-                if (key == 84){ playerName += "t"; }
-                if (key == 85){ playerName += "u"; }
-                if (key == 86){ playerName += "v"; }
-                if (key == 87){ playerName += "w"; } //"Press [ENTER] to play again"
-                if (key == 88){ playerName += "x"; } //"Press [ESC] to exit"
-                if (key == 89){ playerName += "y"; }
-                if (key == 90){ playerName += "z"; }
-                if (key == 48){ playerName += "0"; }
-                if (key == 49){ playerName += "1"; }
-                if (key == 50){ playerName += "2"; }
-                if (key == 51){ playerName += "3"; }
-                if (key == 52){ playerName += "4"; }
-                if (key == 53){ playerName += "5"; }
-                if (key == 54){ playerName += "6"; }
-                if (key == 55){ playerName += "7"; }
-                if (key == 56){ playerName += "8"; }
-                if (key == 57){ playerName += "9"; }
 
+                //only add letters to the name up to 15 characters
+                if (key == 65){ if (playerName.length() < 15) playerName += "A";  }
+                if (key == 66){ if (playerName.length() < 15) playerName += "B"; }
+                if (key == 67){ if (playerName.length() < 15) playerName += "C"; }
+                if (key == 68){ if (playerName.length() < 15) playerName += "D"; }
+                if (key == 69){ if (playerName.length() < 15) playerName += "E"; }
+                if (key == 70){ if (playerName.length() < 15) playerName += "f"; }
+                if (key == 71){ if (playerName.length() < 15) playerName += "g"; }
+                if (key == 72){ if (playerName.length() < 15) playerName += "h"; }
+                if (key == 73){ if (playerName.length() < 15) playerName += "i"; }
+                if (key == 74){ if (playerName.length() < 15) playerName += "j"; }
+                if (key == 75){ if (playerName.length() < 15) playerName += "k"; }
+                if (key == 76){ if (playerName.length() < 15) playerName += "l"; }
+                if (key == 77){ if (playerName.length() < 15) playerName += "m"; }
+                if (key == 78){ if (playerName.length() < 15) playerName += "n"; }
+                if (key == 79){ if (playerName.length() < 15) playerName += "o"; }
+                if (key == 80){ if (playerName.length() < 15) playerName += "p"; }
+                if (key == 81){ if (playerName.length() < 15) playerName += "q"; }
+                if (key == 82){ if (playerName.length() < 15) playerName += "r"; }
+                if (key == 83){ if (playerName.length() < 15) playerName += "s"; } //I'm so sorry -Joaquin
+                if (key == 84){ if (playerName.length() < 15) playerName += "t"; }
+                if (key == 85){ if (playerName.length() < 15) playerName += "u"; }
+                if (key == 86){ if (playerName.length() < 15) playerName += "v"; }
+                if (key == 87){ if (playerName.length() < 15) playerName += "w"; }
+                if (key == 88){ if (playerName.length() < 15) playerName += "x"; }
+                if (key == 89){ if (playerName.length() < 15) playerName += "y"; }
+                if (key == 90){ if (playerName.length() < 15) playerName += "z"; }
+                if (key == 48){ if (playerName.length() < 15) playerName += "0"; }
+                if (key == 49){ if (playerName.length() < 15) playerName += "1"; }
+                if (key == 50){ if (playerName.length() < 15) playerName += "2"; }
+                if (key == 51){ if (playerName.length() < 15) playerName += "3"; }
+                if (key == 52){ if (playerName.length() < 15) playerName += "4"; }
+                if (key == 53){ if (playerName.length() < 15) playerName += "5"; }
+                if (key == 54){ if (playerName.length() < 15) playerName += "6"; }
+                if (key == 55){ if (playerName.length() < 15) playerName += "7"; }
+                if (key == 56){ if (playerName.length() < 15) playerName += "8"; }
+                if (key == 57){ if (playerName.length() < 15) playerName += "9"; }
+
+                //removes letters from the name
                 if (key == 8){
                     if (playerName.length() > 0) { playerName = playerName.substring(0, playerName.length() - 1); }
                 }
 
+                //enters the name and starts the game
                 if (key == 10){
-                    if (playerName.length() > 0) {
+
+                    //checks if the entered name is the appropriate length, then "logs in"
+                    if (playerName.length() > 3 && playerName.length() <= 15) {
+
+                        /*
+                        //TODO: contact server and send name to log in
+                        Thread sendName = new Thread( () -> { loginRequest(playerName); } );
+                        sendName.start();
+                        while (sendName.isAlive()) {
+                            try {
+                                sendName.join();
+                            } catch(InterruptedException ex) {ex.printStackTrace();}
+                        }
+                        */
+
+                        //turn off intro screen
                         login = false;
+                        loginWarning = false;
 
-                        //TODO: contact server
-
+                        //start playing
                         ingame = true;
                         started = true;
+                    }
+
+                    //if the entered name is not long enough, flag to print a warning on the screen
+                    if (playerName.length() < 4) {
+                        loginWarning = true;
                     }
                 }
 
@@ -465,12 +518,23 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 player.setX(playerDefault.x);
                 player.setY(playerDefault.y);
                 player.decrementLives();
+
+                //if the player dies, player's alive status is set to false
+                //  and the game sends a leaderBoardRequest()
                 if (player.getLives() == 0) {
                     player.setX(-50);
                     player.setAlive(false);
+
+                    Thread sendRequest = new Thread( () -> { leaderBoardRequest(playerName, playerScore); } );
+                    sendRequest.start();
+                    while (sendRequest.isAlive()) {
+                        try {
+                            sendRequest.join();
+                        } catch(InterruptedException e) { e.printStackTrace(); }
+                    }
                 }
-            }
-        }
+            }//end of outer if
+        }//end of for
     }//end of collision
 
     //generates a new enemy ship at a given index with a random position and type
@@ -505,9 +569,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
 
         //moves all stars down
-        for (int i = 0; i < stars.length; i++){
+        for (int i = 0; i < stars.length; i++)
             stars[i].setLocation(stars[i].getX(), stars[i].getY() + 1);
-        }
+
     }//end of updateStars
 
     //resets all game objects to their default values
@@ -529,6 +593,53 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         for(int i = 0; i < aliens.length; i++){
             createShip(i);
         }
+    }
+
+    public void startConnection(String ip, int port) throws Exception {
+        clientSocket = new Socket(ip, port);
+        out = new ObjectOutputStream(clientSocket.getOutputStream());
+        in = new ObjectInputStream(clientSocket.getInputStream());
+    }
+
+    public void stopConnection() throws IOException {
+        in.close();
+        out.close();
+        clientSocket.close();
+    }
+
+
+    public void loginRequest(String userName) {
+        try {
+
+            //start a connection with the server, then send a UserProfileRequest
+            startConnection("127.0.0.1", 4444);
+            out.writeObject(new UserProfileRequest(userName));
+
+            //receive a UserProfileResponse, then stop the connection
+            UserProfileResponse response = (UserProfileResponse) in.readObject();
+            stopConnection();
+
+            //create a User object for the player using the received login information
+            playerProfile = new User(response.getUserName(), response.getGamesPlayed(), response.getHighScore());
+
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public void leaderBoardRequest(String userName, int userScore) {
+        try {
+
+            //start a connection with the server, then send a UserScoreRequest
+            startConnection("127.0.0.1", 4444);
+            out.writeObject(new UserScoreRequest("Azaxar",20000));
+
+            //receive an ArrayList<UserScoreResponse> of the 10 highest scores, then stop the connection
+            ArrayList<UserScoreResponse> users = (ArrayList<UserScoreResponse>)in.readObject();
+            stopConnection();
+
+            //transfer received data to the leaderBoard ArrayList
+            leaderBoard.addAll(users);
+
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     //the mouse is not used, except to interact with buttons
