@@ -174,32 +174,21 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setColor(Color.white);
             }
 
+            g.drawString("Press ENTER to play", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Press ENTER to play")/2,
+                    (GameView_HEIGHT/4)*3 + 95);
+            g.drawString("Press SHIFT to exit", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Press SHIFT to exit")/2,
+                    (GameView_HEIGHT/4)*3 + 115);
+
             g.setFont(new Font("Gameplay", Font.PLAIN, 12));
             g.drawString("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas",
                     GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas")/2,
-                    GameView_HEIGHT - 45);
+                    GameView_HEIGHT - 10);
         }
 
         if (started) {
 
-            //represents header details
-            //  header details display even after the player loses, to show the final values of lives and score
-            if (player.getLives() > -1) {
-                g.setColor(Color.WHITE);
-
-                g.setFont(new Font("Arial", Font.PLAIN, 15));
-
-                //draws lives and score data on the top left of the game screen
-                g.drawString("Lives: " + player.getLives(), 5, 20);
-                g.drawString("Score: " + playerScore, 5, 45);
-            }
-
             //dictates in-game behavior
             if (ingame) {
-
-                //draws controls on the top right of the game screen
-                g.drawString("Press ARROW KEYS to move", GameView_WIDTH - g.getFontMetrics().stringWidth("Press ARROW KEYS to move") - 20, 20);
-                g.drawString("Press SPACE BAR to shoot", GameView_WIDTH - g.getFontMetrics().stringWidth("Press SPACE BAR to shoot") - 20, 45);
 
                 //checks the states of any objects in the game and alters objects or lists appropriately
                 collision();
@@ -246,10 +235,19 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     for (Bullet b : bulletList) {
                         g.fillRect(b.getX(), b.getY(), 2, 7);
                     }
+
+
                 }
 
                 //if the player loses all 3 lives, the game ends
                 else { ingame = false; }
+
+                //draws controls on the top right of the game screen
+                g.setFont(new Font("Gameplay", Font.PLAIN, 20));
+                g.setColor(Color.white);
+                g.drawString("Press ARROW KEYS to move", GameView_WIDTH - g.getFontMetrics().stringWidth("Press ARROW KEYS to move") - 5, 30);
+                g.drawString("Press SPACE BAR to shoot", GameView_WIDTH - g.getFontMetrics().stringWidth("Press SPACE BAR to shoot") - 5, 60);
+
             }
 
             //dictates post-game behavior
@@ -287,16 +285,23 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                         (GameView_HEIGHT/4)*3);
 
                 g.setFont(new Font("Gameplay", Font.PLAIN, 15));
-                g.drawString("Press Y to play again",
-                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press Y to play again") / 2,
+                g.drawString("Press ENTER to play again",
+                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press ENTER to play again") / 2,
                         (GameView_HEIGHT/4)*3 + 40);
-                g.drawString("Press N to exit",
-                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press N to exit") / 2,
+                g.drawString("Press SHIFT to exit",
+                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press SHIFT to exit") / 2,
                         (GameView_HEIGHT/4)*3 + 60);
 
 
 
             }//end of if(ingame)
+
+            //draws lives and score data on the top left of the game screen
+            g.setFont(new Font("Gameplay", Font.PLAIN, 20));
+            g.setColor(Color.WHITE);
+            g.drawString("Lives: " + player.getLives(), 5, 30);
+            g.drawString("Score: " + playerScore, 5, 60);
+
         }//end of if(started)
 
         Toolkit.getDefaultToolkit().sync();
@@ -409,7 +414,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                         loginWarning = true;
                     }
                 }
-
             }
 
             //inputs for player controls during the game
@@ -436,15 +440,16 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
 
             if(started && !ingame) {
-                if (key == 89) {
+                if (key == 10) {
                     resetGame();
                     player.setAlive(true);
                     ingame = true;
                 }
+            }
 
-                if (key == 8) {
-                    //TODO: end game
-                }
+            //exits the game
+            if (key == 16) {
+                System.exit(0);
             }
         }//end of keyPress event
     }//end of class TAdapter
