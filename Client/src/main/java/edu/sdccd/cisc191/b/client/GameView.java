@@ -372,6 +372,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (key == 55){ if (playerName.length() < 15) playerName += "7"; }
                 if (key == 56){ if (playerName.length() < 15) playerName += "8"; }
                 if (key == 57){ if (playerName.length() < 15) playerName += "9"; }
+                if (key == 32){ if (playerName.length() < 15) playerName += " "; }
 
                 //removes letters from the name
                 if (key == 8){
@@ -386,7 +387,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
 
                         //contact server and send name to log in
-                        //TODO: make sure this doesn't blow up with networking
                         Thread sendName = new Thread( () -> { loginRequest(playerName); } );
                         sendName.start();
                         while (sendName.isAlive()) {

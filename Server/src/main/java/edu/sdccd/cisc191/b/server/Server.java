@@ -1,9 +1,6 @@
 package edu.sdccd.cisc191.b.server;
 
-import edu.sdccd.cisc191.b.UserProfileRequest;
-import edu.sdccd.cisc191.b.UserProfileResponse;
-import edu.sdccd.cisc191.b.UserScoreRequest;
-import edu.sdccd.cisc191.b.UserScoreResponse;
+import edu.sdccd.cisc191.b.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -47,8 +44,9 @@ public class Server {
 
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
+        boolean running = true;
 
-        while (true) {
+        while (running) {
             clientSocket = serverSocket.accept();
 
             new Thread(() -> {
@@ -87,7 +85,6 @@ public class Server {
                         out.writeObject(leaderBoard);
                         for (UserScoreResponse r : leaderBoard) log.info("UserScoreResponse sent: " + r);
                     }
-
                 } catch (Exception e) { e.printStackTrace(); }
             }).start();
         }
