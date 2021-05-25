@@ -31,12 +31,14 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     Point[] stars;
     boolean login = true;
     boolean started = false;
+    int cursorCount = 0;
 
     Point playerDefault;
     PlayerShip player;
     BufferedImage imgPlayer;
     int playerScore;
     User playerProfile;
+    String playerName = "";
 
     private LinkedList<Bullet> bulletList;
     Bullet bulletHead;
@@ -135,7 +137,14 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         if (login) {
             g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
             g.setColor(Color.white);
-            g.setFont(new Font("Gameplay", Font.PLAIN, 10));
+
+            g.setFont(new Font("Helvetica", Font.PLAIN, 20));
+            g.drawString("Enter your name to begin", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Enter your name to begin")/2,
+                    (GameView_HEIGHT/4)*3);
+            g.drawString(playerName, GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName)/2,
+                    (GameView_HEIGHT/4)*3 + 30);
+
+            g.setFont(new Font("Helvetica", Font.PLAIN, 10));
             g.drawString("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas",
                     GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas")/2,
                     GameView_HEIGHT - 43);
@@ -149,7 +158,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setColor(Color.WHITE);
 
                 //displays player's lives
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.setFont(new Font("Helvetica", Font.PLAIN, 15));
                 g.drawString("Lives: " + player.getLives(), 5, 15);
 
                 //displays player's score
@@ -185,7 +194,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (player.isAlive()) {
 
                     //checks for movement and draws the player ship
-                    //g.drawImage(imgPlayer, player.getX(), player.getY(), this);
                     if (player.moveLeft && player.x > 0) {
                         player.x -= player.getMoveSpeed();
                     }
@@ -219,7 +227,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
                 //displays the "Game Over" text if player runs out of lives
                 g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 100));
+                g.setFont(new Font("Helvetica", Font.PLAIN, 100));
                 g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") / 2,
                         GameView_HEIGHT / 2 - 25);
             }
@@ -234,43 +242,103 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
-            if(key == 37) { //left arrow
-                player.moveLeft = false;
-            }
-            if(key == 39) { //right arrow
-                player.moveRight = false;
-            }
 
-            if(key == 38) { //up arrow) {
-                player.moveUp = false;
-            }
-            if (key == 40) { //down arrow
-                player.moveDown = false;
-            }
-            if(key == 32) { // space bar
-                player.bullet = false;
+            if (started && ingame) {
+                if (key == 37) { //left arrow
+                    player.moveLeft = false;
+                }
+                if (key == 39) { //right arrow
+                    player.moveRight = false;
+                }
+
+                if (key == 38) { //up arrow) {
+                    player.moveUp = false;
+                }
+                if (key == 40) { //down arrow
+                    player.moveDown = false;
+                }
+                if (key == 32) { // space bar
+                    player.bullet = false;
+                }
             }
         }
 
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
-            if(player.x > 0 && key == 37) { //left arrow
-                player.moveLeft = true;
-            }
-            if(player.x < GameView_WIDTH - imgPlayer.getWidth() && key == 39) { //right arrow
-                player.moveRight = true;
+
+            //inputs to get the player's name before the game starts
+            if (login) {
+                if (key == 65){ playerName += "a"; }
+                if (key == 66){ playerName += "b"; }
+                if (key == 67){ playerName += "c"; }
+                if (key == 68){ playerName += "d"; }
+                if (key == 69){ playerName += "e"; }
+                if (key == 70){ playerName += "f"; }
+                if (key == 71){ playerName += "g"; }
+                if (key == 72){ playerName += "h"; }
+                if (key == 73){ playerName += "i"; }
+                if (key == 74){ playerName += "j"; }
+                if (key == 75){ playerName += "k"; }
+                if (key == 76){ playerName += "l"; }
+                if (key == 77){ playerName += "m"; }
+                if (key == 78){ playerName += "n"; }
+                if (key == 79){ playerName += "o"; }
+                if (key == 80){ playerName += "p"; }
+                if (key == 81){ playerName += "q"; }
+                if (key == 82){ playerName += "r"; }
+                if (key == 83){ playerName += "s"; } //I'm so sorry -Joaquin
+                if (key == 84){ playerName += "t"; }
+                if (key == 85){ playerName += "u"; }
+                if (key == 86){ playerName += "v"; }
+                if (key == 87){ playerName += "w"; }
+                if (key == 88){ playerName += "x"; }
+                if (key == 89){ playerName += "y"; }
+                if (key == 90){ playerName += "z"; }
+                if (key == 48){ playerName += "0"; }
+                if (key == 49){ playerName += "1"; }
+                if (key == 50){ playerName += "2"; }
+                if (key == 51){ playerName += "3"; }
+                if (key == 52){ playerName += "4"; }
+                if (key == 53){ playerName += "5"; }
+                if (key == 54){ playerName += "6"; }
+                if (key == 55){ playerName += "7"; }
+                if (key == 56){ playerName += "8"; }
+                if (key == 57){ playerName += "9"; }
+
+                if (key == 8){
+                    if (playerName.length() > 0) { playerName = playerName.substring(0, playerName.length() - 1); }
+                }
+
+                if (key == 10){
+                    if (playerName.length() > 0) {
+                        login = false;
+
+
+                        started = true;
+                    }
+                }
+
             }
 
-            if(player.y > 0 && key == 38) { //up arrow
-                player.moveUp = true;
-            }
-            if (player.y < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
-                player.moveDown = true;
-            }
-            if(key == 32){
-                if(!player.bullet) {
-                    player.bullet = true;
-                    shoot();
+            if (started && ingame) {
+                if (player.x > 0 && key == 37) { //left arrow
+                    player.moveLeft = true;
+                }
+                if (player.x < GameView_WIDTH - imgPlayer.getWidth() && key == 39) { //right arrow
+                    player.moveRight = true;
+                }
+
+                if (player.y > 0 && key == 38) { //up arrow
+                    player.moveUp = true;
+                }
+                if (player.y < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
+                    player.moveDown = true;
+                }
+                if (key == 32) {
+                    if (!player.bullet) {
+                        player.bullet = true;
+                        shoot();
+                    }
                 }
             }
         }//end of keyPress event
