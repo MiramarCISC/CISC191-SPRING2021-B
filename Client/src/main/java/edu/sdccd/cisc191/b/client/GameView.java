@@ -270,7 +270,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 //draws top 10 highscores and player names
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 20));
-                //TODO: Make sure this doesn't blow up with networking
+
                 for (int i = 0; i < leaderBoard.size(); i++) {
                     UserScoreResponse r = leaderBoard.get(i);
                     g.drawString(r.getUserName(), GameView_WIDTH / 5, GameView_HEIGHT/4 + 190 + (25 * i));

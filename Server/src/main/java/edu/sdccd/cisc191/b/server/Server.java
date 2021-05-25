@@ -59,6 +59,7 @@ public class Server {
                     Object requestObject = in.readObject();
                     if (requestObject instanceof UserProfileRequest) {
                         UserProfileRequest request = (UserProfileRequest) requestObject;
+                        log.info("");
                         log.info("UserProfileRequest received: " + request);
                         User user = userRepository.findByUserName(request.getUserName());
                         if (user == null) {
@@ -71,6 +72,7 @@ public class Server {
                     }
                     else if (requestObject instanceof UserScoreRequest) {
                         UserScoreRequest request = (UserScoreRequest) requestObject;
+                        log.info("");
                         log.info("UserScoreRequest received: " + request);
                         User user = userRepository.findByUserName(request.getUserName());
                         if (request.getHighScore() > user.getHighScore()) {
@@ -85,6 +87,7 @@ public class Server {
                         out.writeObject(leaderBoard);
                         for (UserScoreResponse r : leaderBoard) log.info("UserScoreResponse sent: " + r);
                     }
+
                 } catch (Exception e) { e.printStackTrace(); }
             }).start();
         }
