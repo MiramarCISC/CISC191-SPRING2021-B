@@ -253,103 +253,56 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
 
                 //Placeholders for top 10 highscores
-                //{
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 15));
-                g.drawString("1. " + user1, GameView_WIDTH / 4, 230);
 
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                //{
+                g.drawString("1. " + user1, GameView_WIDTH / 4, 230);
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 230);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("2. " + String.format("%-20s",user1), GameView_WIDTH / 4, 250);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 250);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("3. " + String.format("%-20s",user1), GameView_WIDTH / 4, 270);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 270);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("4. " + String.format("%-20s",user1), GameView_WIDTH / 4, 290);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 290);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("5. " + String.format("%-20s",user1), GameView_WIDTH / 4, 310);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 310);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("6. " + String.format("%-20s",user1), GameView_WIDTH / 4, 330);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 330);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("7. " + String.format("%-20s",user1), GameView_WIDTH / 4, 350);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 350);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("8. " + String.format("%-20s",user1), GameView_WIDTH / 4, 370);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 370);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("9. " + String.format("%-20s",user1), GameView_WIDTH / 4, 390);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 390);
                 //}
 
                 //{
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString("10. " + String.format("%-20s",user1), GameView_WIDTH / 4, 410);
-
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
                 g.drawString(String.format("%d", score1), GameView_WIDTH / 2, 410);
                 //}
 
@@ -372,6 +325,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Gameplay", Font.PLAIN, 30));
                 g.drawString("No", 430, 550);
+
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Gameplay", Font.PLAIN, 15));
+                g.drawString("Press 'Y' for to play again, 'N' to exit.",
+                        GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Press 'Y' for yes, 'N' for no.") / 2 -35,
+                        GameView_HEIGHT - 45);
 
 
 
@@ -492,14 +451,14 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             }
 
             if(started && !ingame) {
-                if (key == 10) {
+                if (key == 89) {
                     resetGame();
                     player.setAlive(true);
                     ingame = true;
                 }
 
-                if (key == 8) {
-                    //TODO: end game
+                if (key == 78) {
+                    System.exit(0);
                 }
             }
         }//end of keyPress event
@@ -674,6 +633,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
     }
 
+//    g.setColor(Color.WHITE);
+//                g.setFont(new Font("Gameplay", Font.PLAIN, 30));
+//                g.drawString("Yes", GameView_WIDTH / 4, 550);
     //the mouse is not used, except to interact with buttons
     public void mousePressed(MouseEvent e) {}
 
