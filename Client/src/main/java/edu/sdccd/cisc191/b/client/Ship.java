@@ -16,8 +16,6 @@ public abstract class Ship {
         this.alive = alive;
     }
 
-    public abstract Bullet shoot();
-
     public int getX() {
         return x;
     }
