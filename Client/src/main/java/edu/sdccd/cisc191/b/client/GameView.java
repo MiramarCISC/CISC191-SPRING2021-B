@@ -21,7 +21,7 @@ import java.awt.image.*;
 public class GameView  extends JPanel implements Runnable, MouseListener
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
-    boolean ingame = true;
+    boolean ingame = false;
     private Dimension d;
     int GameView_WIDTH = (int) (size.getWidth() / 2);
     int GameView_HEIGHT = (int) (size.getHeight() - 35);
@@ -82,7 +82,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         randomNum = new Random();
 
         //creates background stars
-        stars = new Point[100];
+        stars = new Point[150];
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Point(randomNum.nextInt(GameView_WIDTH - 60), randomNum.nextInt(1000));
         }
@@ -138,16 +138,16 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
             g.setColor(Color.white);
 
-            g.setFont(new Font("Helvetica", Font.PLAIN, 20));
+            g.setFont(new Font("Gameplay", Font.PLAIN, 20));
             g.drawString("Enter your name to begin", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Enter your name to begin")/2,
                     (GameView_HEIGHT/4)*3);
             g.drawString(playerName, GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName)/2,
                     (GameView_HEIGHT/4)*3 + 30);
 
-            g.setFont(new Font("Helvetica", Font.PLAIN, 10));
+            g.setFont(new Font("Gameplay", Font.PLAIN, 12));
             g.drawString("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas",
                     GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Created by: Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, and Maria Lourdes Thomas")/2,
-                    GameView_HEIGHT - 43);
+                    GameView_HEIGHT - 45);
         }
 
         if (started) {
@@ -157,16 +157,19 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             if (player.getLives() > -1) {
                 g.setColor(Color.WHITE);
 
-                //displays player's lives
-                g.setFont(new Font("Helvetica", Font.PLAIN, 15));
-                g.drawString("Lives: " + player.getLives(), 5, 15);
+                g.setFont(new Font("Arial", Font.PLAIN, 15));
 
-                //displays player's score
-                g.drawString("Score: " + playerScore, GameView_WIDTH / 2, 15);
+                //draws lives and score data on the top left of the game screen
+                g.drawString("Lives: " + player.getLives(), 5, 20);
+                g.drawString("Score: " + playerScore, 5, 45);
             }
 
             //dictates in-game behavior
             if (ingame) {
+
+                //draws controls on the top right of the game screen
+                g.drawString("Press ARROW KEYS to move", GameView_WIDTH - g.getFontMetrics().stringWidth("Press ARROW KEYS to move") - 20, 20);
+                g.drawString("Press SPACE BAR to shoot", GameView_WIDTH - g.getFontMetrics().stringWidth("Press SPACE BAR to shoot") - 20, 45);
 
                 //checks the states of any objects in the game and alters objects or lists appropriately
                 collision();
@@ -227,7 +230,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
                 //displays the "Game Over" text if player runs out of lives
                 g.setColor(Color.WHITE);
-                g.setFont(new Font("Helvetica", Font.PLAIN, 100));
+                g.setFont(new Font("Gameplay", Font.PLAIN, 100));
                 g.drawString("Game Over", GameView_WIDTH / 2 - g.getFontMetrics().stringWidth("Game Over") / 2,
                         GameView_HEIGHT / 2 - 25);
             }
@@ -268,11 +271,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
             //inputs to get the player's name before the game starts
             if (login) {
-                if (key == 65){ playerName += "a"; }
-                if (key == 66){ playerName += "b"; }
-                if (key == 67){ playerName += "c"; }
-                if (key == 68){ playerName += "d"; }
-                if (key == 69){ playerName += "e"; }
+                if (key == 65){ playerName += "A"; }
+                if (key == 66){ playerName += "B"; }
+                if (key == 67){ playerName += "C"; }
+                if (key == 68){ playerName += "D"; }
+                if (key == 69){ playerName += "E"; }
                 if (key == 70){ playerName += "f"; }
                 if (key == 71){ playerName += "g"; }
                 if (key == 72){ playerName += "h"; }
@@ -290,8 +293,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (key == 84){ playerName += "t"; }
                 if (key == 85){ playerName += "u"; }
                 if (key == 86){ playerName += "v"; }
-                if (key == 87){ playerName += "w"; }
-                if (key == 88){ playerName += "x"; }
+                if (key == 87){ playerName += "w"; } //"Press [ENTER] to play again"
+                if (key == 88){ playerName += "x"; } //"Press [ESC] to exit"
                 if (key == 89){ playerName += "y"; }
                 if (key == 90){ playerName += "z"; }
                 if (key == 48){ playerName += "0"; }
@@ -313,13 +316,16 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     if (playerName.length() > 0) {
                         login = false;
 
+                        //TODO: contact server
 
+                        ingame = true;
                         started = true;
                     }
                 }
 
             }
 
+            //inputs for player controls during the game
             if (started && ingame) {
                 if (player.x > 0 && key == 37) { //left arrow
                     player.moveLeft = true;
@@ -339,6 +345,18 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                         player.bullet = true;
                         shoot();
                     }
+                }
+            }
+
+            if(started && !ingame) {
+                if (key == 10) {
+                    resetGame();
+                    player.setAlive(true);
+                    ingame = true;
+                }
+
+                if (key == 8) {
+                    //TODO: end game
                 }
             }
         }//end of keyPress event
@@ -480,17 +498,38 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     public void updateStars() {
 
-        //if a star travels above the game screen, sets it at a random position below the game screen
+        //if a star travels below the game screen, sets it at a random position above the game screen
         for (int i = 0; i < stars.length; i++) {
-            if (stars[i].getY() < 0)
-                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), GameView_HEIGHT);
+            if (stars[i].getY() > GameView_HEIGHT + 1)
+                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), - 1);
         }
 
-        //moves all stars up one pixel
+        //moves all stars down
         for (int i = 0; i < stars.length; i++){
-            stars[i].setLocation(stars[i].getX(), stars[i].getY() - 1);
+            stars[i].setLocation(stars[i].getX(), stars[i].getY() + 1);
         }
     }//end of updateStars
+
+    //resets all game objects to their default values
+    public void resetGame() {
+
+        //resets bullets
+        for(int i = 0; i < bulletList.size(); ++i) {
+            bulletList.set(i, new Bullet(0, 0));
+            bulletHead = bulletList.get(i);
+        }
+
+        //resets player
+        player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY());
+        player.setX((int)playerDefault.getX());
+        player.setY((int)playerDefault.getY());
+        playerScore = 0;
+
+        //resets enemy ships
+        for(int i = 0; i < aliens.length; i++){
+            createShip(i);
+        }
+    }
 
     //the mouse is not used, except to interact with buttons
     public void mousePressed(MouseEvent e) {}
