@@ -39,12 +39,12 @@ public class Server {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    boolean running = true;
 
     private static final Logger log = LoggerFactory.getLogger(Server.class);
 
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
-        boolean running = true;
 
         while (running) {
             clientSocket = serverSocket.accept();
@@ -55,6 +55,7 @@ public class Server {
                     in = new ObjectInputStream(clientSocket.getInputStream());
 
                     Object requestObject = in.readObject();
+
                     if (requestObject instanceof UserProfileRequest) {
                         UserProfileRequest request = (UserProfileRequest) requestObject;
                         log.info("");
@@ -68,6 +69,7 @@ public class Server {
                         out.writeObject(response);
                         log.info("UserProfileResponse sent: " + response);
                     }
+
                     else if (requestObject instanceof UserScoreRequest) {
                         UserScoreRequest request = (UserScoreRequest) requestObject;
                         log.info("");
