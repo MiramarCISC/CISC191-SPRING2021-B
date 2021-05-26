@@ -183,6 +183,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     GameView_HEIGHT - 10);
         }
 
+        //if the player has started playing
         if (started) {
 
             //dictates in-game behavior
