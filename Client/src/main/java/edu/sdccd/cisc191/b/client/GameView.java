@@ -455,7 +455,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     }//end of class TAdapter
 
 
-    public void loadImages() {
+    private void loadImages() {
         try {
 
             //loads logo image
@@ -476,7 +476,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         } catch (Exception e) { e.printStackTrace(); }
     }//end of loadImages
 
-    public void shoot() {
+    private void shoot() {
 
         //add a new bullet to the bullet list
         Bullet newBullet = new Bullet(player.getX() + 25, player.getY());
@@ -490,7 +490,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }
     }//end of shoot
 
-    public void move(){
+    private void move(){
 
         //moves all bullets forward
         for(int i = 0; i < bulletList.size(); ++i)
@@ -502,7 +502,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     }// end of move
 
-    public void collision() {
+    private void collision() {
 
         //if a bullet hits an enemy ship, set that enemy ship's hit status to true, and store a new bullet off screen
         for (int i = 0; i < bulletList.size(); i++) {
@@ -572,7 +572,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     }//end of collision
 
     //generates a new enemy ship at a given index with a random position and type
-    public void createShip(int index) {
+    private void createShip(int index) {
 
         //sets random x and y positions
         enemyXPos[index] = randomNum.nextInt(GameView_WIDTH - 60);
@@ -595,7 +595,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
     }//end of createShip
 
-    public void updateStars() {
+    private void updateStars() {
 
         //if a star travels below the game screen, sets it at a random position above the game screen
         for (int i = 0; i < stars.length; i++) {
@@ -610,7 +610,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     }//end of updateStars
 
     //resets all game objects to their default values
-    public void resetGame() {
+    private void resetGame() {
 
         //resets bullets
         for(int i = 0; i < bulletList.size(); ++i)
@@ -630,24 +630,24 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         leaderBoard = new ArrayList<>();
     }
 
-    public void startConnection(String ip, int port) throws Exception {
-        clientSocket = new Socket(ip, port);
+    private void startConnection() throws Exception {
+        clientSocket = new Socket("127.0.0.1", 4444);
         out = new ObjectOutputStream(clientSocket.getOutputStream());
         in = new ObjectInputStream(clientSocket.getInputStream());
     }
 
-    public void stopConnection() throws IOException {
+    private void stopConnection() throws IOException {
         in.close();
         out.close();
         clientSocket.close();
     }
 
 
-    public void profileRequest(String userName) {
+    private void profileRequest(String userName) {
         try {
 
             //start a connection with the server, then send a UserProfileRequest
-            startConnection("127.0.0.1", 4444);
+            startConnection();
             out.writeObject(new UserProfileRequest(userName));
 
             //receive a UserProfileResponse, then stop the connection
@@ -660,11 +660,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public void leaderBoardRequest(String userName, int userScore) {
+    private void leaderBoardRequest(String userName, int userScore) {
         try {
 
             //start a connection with the server, then send a UserScoreRequest
-            startConnection("127.0.0.1", 4444);
+            startConnection();
             out.writeObject(new UserScoreRequest(playerName, playerScore));
 
             //receive an ArrayList<UserScoreResponse> of the 10 highest scores, then stop the connection
