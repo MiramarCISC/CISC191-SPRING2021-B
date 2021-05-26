@@ -12,7 +12,7 @@ public class User{
     private Long id;
     private String userName;
     private int gamesPlayed;
-    private int gameLevelsCleared;
+    private int gameLevelsCleared; //I'm trying to figure out how to remove this column from the table -Joaquin
     private int highScore;
 
     protected User(){}
@@ -22,13 +22,6 @@ public class User{
         gamesPlayed = 0;
         gameLevelsCleared = 0;
         highScore = 0;
-    }
-
-    public User(String name, int highScore) {
-        this.userName = name;
-        gamesPlayed = 0;
-        gameLevelsCleared = 0;
-        this.highScore = highScore;
     }
 
     @Override

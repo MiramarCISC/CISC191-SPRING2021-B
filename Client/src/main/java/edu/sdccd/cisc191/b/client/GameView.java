@@ -68,13 +68,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         d = new Dimension(GameView_WIDTH, GameView_HEIGHT);
         setBackground(Color.black);
 
+        //setup for UI
         fontName = "Arial";
-
-        //setup for the login screen
-        loadImgLogo();
+        loadImages();
 
         //creates our player ship object and sets its position to the bottom middle of the screen (default position)
-        loadImgPlayer();
         playerDefault = new Point(GameView_WIDTH /2 - imgPlayer.getWidth()/2,
                                    GameView_HEIGHT - 100);
         player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY());
@@ -84,23 +82,17 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         //creates our player's bullets
         bulletList = new LinkedList<>();
-
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < 80; i++)
             bulletList.add(new Bullet(0,0));
-        }
 
         randomNum = new Random();
 
         //creates background stars
         stars = new Point[150];
-        for (int i = 0; i < stars.length; i++) {
+        for (int i = 0; i < stars.length; i++)
             stars[i] = new Point(randomNum.nextInt(GameView_WIDTH - 60), randomNum.nextInt(1000));
-        }
 
         //setup for creating enemy ships
-        loadImgAlienType1();
-        loadImgAlienType2();
-        loadImgAlienType3();
         enemyXPos = new int[20];
         enemyYPos = new int[20];
         aliens = new EnemyShip[20];
@@ -110,6 +102,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             createShip(i);
         }
 
+        //initializes leaderboard
         leaderBoard = new ArrayList<>();
 
         if (animator == null || !ingame) {
@@ -123,21 +116,28 @@ public class GameView  extends JPanel implements Runnable, MouseListener
      * This is the method that updates the state of every visual in the game, from Ships to the score,
      * to even the stars in the background. paint() is repeatedly called in GameView's run() method.
      *
+     * Before playing:
+     *      paint() draws the "Battle X Armada" game logo at the top of the screen.
+     *      The user is prompted to enter their username, and paint() draws the characters that are typed.
+     *      If the user enters a name that is too short, paint() draws a warning message
+     *
      * While playing:
      *      paint() checks for the states of objects using collision(), and moves objects using move().
-     *      The enemy ships and header details ("Lives:" and "Score:") are drawn
-     *        regardless of the status of the ingame boolean.
-     *      If ingame is true, paint() checks for movement then draws the player, along with any active
-     *        bullets, if the player is alive. If the player is no longer alive, ingame is set to false.
-     *      If ingame is false, "Game Over" is painted along with the leaderboard. The player is given
-     *        the option to play again or quit.
+     *      The header details ("Lives:" and "Score:") are drawn at the top left of the screen, and the
+     *          player's user profile details are drawn at the bottom of the screen, regardless of the
+     *          status of <b>ingame</b>.
+     *      If <b>ingame</b> is true, paint() checks for movement then draws the player, along with and
+     *          active bullets, if the player is alive. If the player is no longer alive, <b>ingame</b>
+     *          is set to false. The game's controls are drawn at the top right of the screen while playing
+     *      If <b>ingame</b> is false, "Game Over" is painted along with the leaderboard. The player is given
+     *          the option to play again or quit.
      */
     public void paint(Graphics g)
     {
         super.paint(g);
 
         //checks the status of background stars and moves them up
-        //stars are present no matter what "screen" GameView is on
+        //stars are present no matter what "screen" the game is on
         updateStars();
 
         //  draws background stars
@@ -146,10 +146,11 @@ public class GameView  extends JPanel implements Runnable, MouseListener
             g.fillOval((int)p.getX(), (int)p.getY(), 3, (int)(Math.random()*5 + 1));
         }
 
+        //if the player is on the opening screen of the game
         if (login) {
 
             //draws the "Battle X Armada" logo; blame Joaquin for how bad it looks
-            //graphic design is my passion
+            //  graphic design is my passion
             g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
             g.setColor(Color.white);
 
@@ -379,12 +380,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (key == 32){ if (playerName.length() < 15) playerName += " "; }
 
                 //removes letters from the name
-                if (key == 8){
+                if (key == 8) { //backspace
                     if (playerName.length() > 0) { playerName = playerName.substring(0, playerName.length() - 1); }
                 }
 
                 //enters the name and starts the game
-                if (key == 10){
+                if (key == 10) { //enter
 
                     //checks if the entered name is the appropriate length, then "logs in"
                     if (playerName.length() > 2 && playerName.length() <= 15) {
@@ -428,7 +429,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 if (player.getY() < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
                     player.setMoveDown(true);
                 }
-                if (key == 32) {
+                if (key == 32) { //space
                     if (!player.isBullet()) {
                         player.setBullet(true);
                         shoot();
@@ -436,8 +437,9 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                 }
             }
 
+            //starts the game again if the game ended
             if(started && !ingame) {
-                if (key == 10) {
+                if (key == 10) { //enter
                     resetGame();
                     player.setAlive(true);
                     ingame = true;
@@ -451,36 +453,27 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         }//end of keyPress event
     }//end of class TAdapter
 
-    //"loadImg" methods load associated images for the game
-    public void loadImgLogo() {
+
+    public void loadImages() {
         try {
+
+            //loads logo image
             imgLogo = ImageIO.read(this.getClass().getResourceAsStream("/BxA Logo.png"));
-        } catch(Exception e) {}
-    }
 
-    public void loadImgPlayer() {
-        try {
+            //loads player ship image
             imgPlayer = ImageIO.read(this.getClass().getResourceAsStream("/playerShip.png"));
-        } catch(Exception e){}
-    }
 
-    public void loadImgAlienType1() {
-        try {
+            //loads enemy type 1 image
             imgAlienType1 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType1.png"));
-        } catch(Exception e) {}
-    }
 
-    public void loadImgAlienType2() {
-        try {
+            //loads enemy type 2 image
             imgAlienType2 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType2.png"));
-        } catch(Exception e) {}
-    }
 
-    public void loadImgAlienType3() {
-        try {
+            //loads enemy type 3 image
             imgAlienType3 = ImageIO.read(this.getClass().getResourceAsStream("/enemyType3.png"));
-        } catch(Exception e) {}
-    }
+
+        } catch (Exception e) { e.printStackTrace(); }
+    }//end of loadImages
 
     public void shoot() {
 
@@ -488,27 +481,24 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         Bullet newBullet = new Bullet(player.getX() + 25, player.getY());
         bulletList.add(newBullet);
 
+        //if a bullet is above the game screen, store a new bullet off screen
         for (int i = 0; i < bulletList.size(); i++) {
             Bullet bullet = bulletList.get(i);
-
-            //if a bullet is above the game screen, store a new bullet off screen
-            if (bullet.getY() < 0) {
+            if (bullet.getY() < 0)
                 bulletList.remove(bulletList.get(i));
-            }
         }
     }//end of shoot
 
     public void move(){
 
         //moves all bullets forward
-        for(int i = 0; i < bulletList.size(); ++i) {
+        for(int i = 0; i < bulletList.size(); ++i)
             bulletList.set(i, new Bullet(bulletList.get(i).getX(), bulletList.get(i).getY() - 10));
-        }
 
         //moves all aliens down according to their moveSpeed
-        for (int i = 0; i < aliens.length; i++){
+        for (int i = 0; i < aliens.length; i++)
             aliens[i].setY(aliens[i].getY() + aliens[i].getMoveSpeed());
-        }
+
     }// end of move
 
     public void collision() {
@@ -522,29 +512,29 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                         bulletList.remove(bulletList.get(i));
                     }
                 }
-                else if (i>=1) {
+                else if (i>=1)
                     i--;
-                }
             }
         }
 
-        //check if any enemy ships have been bit by bullets
+        //check if any enemy ships have been hit by bullets
         for (int j = 0; j < aliens.length; j++) {
+
             //"eliminates" a hit enemy ship by creating a new one above the game screen and incrementing score
             if (aliens[j].isHit()) {
                 playerScore += aliens[j].getScoreToDrop();
                 createShip(j);
             }
 
-            //creates a new enemy ship above the game screen if the enemy ship travels below the game screen
+            //creates a new enemy ship above the game screen if the given enemy ship travels below the game screen
             else if (aliens[j].getY() >= GameView_HEIGHT) {
                 createShip(j);
             }
         }
 
         //if an enemy ship collides with the player,
-        //player loses a life and is set to the default position
-        //and a new enemy ship is created above the game screen
+        //  player loses a life and is set to the default position
+        //  and a new enemy ship is created above the game screen
         for (int i = 0; i < aliens.length; i++) {
             if (aliens[i].getHitBox().intersects(player.getHitBox())) {
                 createShip(i);
@@ -558,6 +548,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                     player.setX(-50);
                     player.setAlive(false);
 
+                    //sends a leaderBoardRequest() to receive highscore data
                     Thread sendRequest = new Thread( () -> { leaderBoardRequest(playerName, playerScore); } );
                     sendRequest.start();
                     while (sendRequest.isAlive()) {
@@ -566,6 +557,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                         } catch(InterruptedException e) { e.printStackTrace(); }
                     }
 
+                    //sends a profileRequest to update the player's displayed profile details
                     Thread sendName = new Thread( () -> { profileRequest(playerName); } );
                     sendName.start();
                     while (sendName.isAlive()) {
@@ -573,7 +565,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
                             sendName.join();
                         } catch(InterruptedException ex) {ex.printStackTrace();}
                     }
-                }
+                }//end of inner if
             }//end of outer if
         }//end of for
     }//end of collision
@@ -599,6 +591,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         //5% probability of creating a Type 3 enemy ship
         else if (shipType > 95)
             aliens[index] = new EnemyShip(enemyXPos[index], enemyYPos[index], 3);
+
     }//end of createShip
 
     public void updateStars() {
@@ -619,9 +612,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     public void resetGame() {
 
         //resets bullets
-        for(int i = 0; i < bulletList.size(); ++i) {
+        for(int i = 0; i < bulletList.size(); ++i)
             bulletList.set(i, new Bullet(0, 0));
-        }
 
         //resets player
         player = new PlayerShip((int)playerDefault.getX(), (int)playerDefault.getY());
@@ -630,9 +622,8 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         playerScore = 0;
 
         //resets enemy ships
-        for(int i = 0; i < aliens.length; i++){
+        for(int i = 0; i < aliens.length; i++)
             createShip(i);
-        }
 
         //resets leaderboard
         leaderBoard = new ArrayList<>();
@@ -685,7 +676,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    //the mouse is not used, except to interact with buttons
+    //mouse inputs are not used
     public void mousePressed(MouseEvent e) {}
 
     public void mouseReleased(MouseEvent e) {}
