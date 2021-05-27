@@ -12,7 +12,7 @@ public class User{
     private Long id;
     private String userName;
     private int gamesPlayed;
-    private int gameLevelsCleared; //I'm trying to figure out how to remove this column from the table -Joaquin
+    private int gameLevelsCleared;
     private int highScore;
 
     protected User(){}
@@ -24,11 +24,24 @@ public class User{
         highScore = 0;
     }
 
+    public User(String name, int highScore) {
+        this.userName = name;
+        gamesPlayed = 0;
+        gameLevelsCleared = 0;
+        this.highScore = highScore;
+    }
+
     @Override
-    public String toString() { return String.format("User[id=%d, userName='%s', highScore=%d]", id, userName, highScore); }
+    public String toString() {
+        return String.format("User[id=%d, userName='%s', highScore=%d]", id, userName, highScore);
+    }
 
     public String getUserName() {
         return userName;
+    }
+
+    public void setUserName(String name) {
+        this.userName = name;
     }
 
     public int getGamesPlayed() {

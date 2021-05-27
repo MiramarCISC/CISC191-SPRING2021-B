@@ -12,7 +12,11 @@ public class UserProfileRequest implements Serializable {
     }
 
     @Override
-    public String toString() { return String.format("User[userName='%s']", userName); }
+    public String toString() {
+        return String.format(
+                "User[userName='%s']",
+                userName);
+    }
 
     public String getUserName() {
         return userName;

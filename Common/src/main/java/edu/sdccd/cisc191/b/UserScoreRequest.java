@@ -1,42 +1,30 @@
 package edu.sdccd.cisc191.b;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Serializable;
 
-public class UserScoreRequest {
-    private Integer score;
+public class UserScoreRequest implements Serializable {
+    private String userName;
+    private Integer highScore;
 
-    /**
-     * converts java objects to JSON objects
-     */
-    @JsonIgnore
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    public static String toJSON(UserScoreRequest user) throws Exception{
-        return objectMapper.writeValueAsString(user);
-    }
-
-    /**
-     * converts  JSON objects to java objects
-     */
-    public static UserScoreRequest fromJSON(String input) throws Exception{
-        return objectMapper.readValue(input, UserScoreRequest.class);
-    }
     protected UserScoreRequest() {}
 
-    public UserScoreRequest(Integer score){
-        this.score = score;
+    public UserScoreRequest(String userName, Integer highScore) {
+        this.userName = userName;
+        this.highScore = highScore;
     }
 
     @Override
-    public String toString(){
-        return String.format("User[score=%d]", score);
+    public String toString() {
+        return String.format(
+                "User[userName='%s', highScore=%d]",
+                userName,highScore);
     }
 
-    public Integer getScore() {
-        return score;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
+    public Integer getHighScore() {
+        return highScore;
     }
 }

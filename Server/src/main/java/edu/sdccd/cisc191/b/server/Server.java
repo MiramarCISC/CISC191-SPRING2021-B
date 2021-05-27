@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * @author Joaquin Dicang
  *
- * This program is a server used to send and receive data from the Client (GameView) pertaining to User objects.
+ * This program is a server used to send and receive data from the Client pertaining to User objects.
  *
  * When the game is launched, the Server receives a UserProfileRequest(userName) from
  * the Client containing a String userName. The Server finds a User in the database
@@ -44,62 +44,44 @@ public class Server {
 
     public void start(int port, UserRepository userRepository) throws Exception {
         serverSocket = new ServerSocket(port);
+        boolean running = true;
 
-        while (true) {
-            //try connecting to available clients
+        while (running) {
             clientSocket = serverSocket.accept();
 
-            //handling requests
             new Thread(() -> {
                 try {
                     out = new ObjectOutputStream(clientSocket.getOutputStream());
                     in = new ObjectInputStream(clientSocket.getInputStream());
 
-                    //read a request from the client
                     Object requestObject = in.readObject();
-
-                    //if the received request is a UserProfileRequest
                     if (requestObject instanceof UserProfileRequest) {
                         UserProfileRequest request = (UserProfileRequest) requestObject;
                         log.info("");
                         log.info("UserProfileRequest received: " + request);
-
-                        //find a user with a matching username
                         User user = userRepository.findByUserName(request.getUserName());
-
-                        //if none is found, create a new user with the username and save it to the database
                         if (user == null) {
                             user = new User(request.getUserName());
                             userRepository.save(user);
                         }
-
-                        //return user information to the client
                         UserProfileResponse response = new UserProfileResponse(user.getUserName(), user.getGamesPlayed(), user.getHighScore());
                         out.writeObject(response);
                         log.info("UserProfileResponse sent: " + response);
                     }
-
-                    //if the received request is a UserScoreRequest
                     else if (requestObject instanceof UserScoreRequest) {
                         UserScoreRequest request = (UserScoreRequest) requestObject;
                         log.info("");
                         log.info("UserScoreRequest received: " + request);
-
-                        //find a user with a matching username
                         User user = userRepository.findByUserName(request.getUserName());
-
-                        //if the highscore received is higher than the one in the database, update the database
-                        if (request.getHighScore() > user.getHighScore())
+                        if (request.getHighScore() > user.getHighScore()) {
                             user.setHighScore(request.getHighScore());
-
-                        //  increment gamesPlayed for the user
+                        }
                         user.setGamesPlayed(user.getGamesPlayed() + 1);
                         userRepository.save(user);
-
-                        //return the top 10 highscores and usernames to the client
                         ArrayList<UserScoreResponse> leaderBoard = new ArrayList<>();
-                        for (User u : userRepository.findTop10ByOrderByHighScoreDesc())
+                        for (User u : userRepository.findTop10ByOrderByHighScoreDesc()) {
                             leaderBoard.add(new UserScoreResponse(u.getUserName(), u.getHighScore()));
+                        }
                         out.writeObject(leaderBoard);
                         for (UserScoreResponse r : leaderBoard) log.info("UserScoreResponse sent: " + r);
                     }
