@@ -14,11 +14,7 @@ public class UserScoreRequest implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return String.format(
-                "User[userName='%s', highScore=%d]",
-                userName,highScore);
-    }
+    public String toString() { return String.format("User[userName='%s', highScore=%d]", userName, highScore); }
 
     public String getUserName() {
         return userName;

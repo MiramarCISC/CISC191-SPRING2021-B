@@ -5,50 +5,26 @@ import java.awt.*;
 public class EnemyShip extends Ship{
     private int type;
     private int scoreToDrop;
-    int x,y;
-    int moveSpeed;
     boolean hit;
 
     public EnemyShip(int x, int y, int type){
-        super(0,0);
-        this.x = x;
-        this.y = y;
+        super(x,y);
         this.type = type;
         if (type == 1){
-            moveSpeed = 2;
+            setMoveSpeed(2);
             scoreToDrop = 7;
         }
 
         if (type == 2){
-            moveSpeed = 4;
+            setMoveSpeed(4);
             scoreToDrop = 15;
         }
 
         if (type == 3){
-            moveSpeed = 6;
+            setMoveSpeed(6);
             scoreToDrop = 35;
         }
         hit = false;
-    }
-
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
     }
 
     public int getType() {
@@ -56,19 +32,14 @@ public class EnemyShip extends Ship{
     }
 
     public Rectangle getHitBox() {
-        return new Rectangle(getX(),getY(), 50,50);
+        return new Rectangle(getX(), getY(), 50,50);
     }
 
-    public boolean isHit() {
-        return hit;
-    }
+    public boolean isHit() { return hit; }
 
-    public void setHit(boolean hit) {
-        this.hit = hit;
-    }
+    public void setHit(boolean hit) { this.hit = hit; }
 
     public int getScoreToDrop() {
         return scoreToDrop;
     }
-
 }

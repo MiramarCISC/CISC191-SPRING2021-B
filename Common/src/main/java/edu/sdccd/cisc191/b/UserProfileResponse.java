@@ -16,10 +16,7 @@ public class UserProfileResponse implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return String.format(
-                "User[name='%s', gamesPlayed=%d, highScore=%d]",
-                userName,gamesPlayed,highScore);
+    public String toString() { return String.format("User[name='%s', gamesPlayed=%d, highScore=%d]", userName, gamesPlayed, highScore);
     }
 
     public String getUserName() {

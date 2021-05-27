@@ -1,19 +1,12 @@
 package edu.sdccd.cisc191.b.client;
 
-public abstract class Ship {
-    private boolean alive;
-    int x, y;
+public class Ship {
+    private int moveSpeed;
+    private int x,y;
 
     public Ship(int x, int y){
         this.x = x;
         this.y = y;
-    }
-    public boolean isAlive() {
-        return alive;
-    }
-
-    public void setAlive(boolean alive) {
-        this.alive = alive;
     }
 
     public int getX() {
@@ -31,4 +24,10 @@ public abstract class Ship {
     public void setY(int y) {
         this.y = y;
     }
+
+    public int getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void setMoveSpeed(int moveSpeed) { this.moveSpeed = moveSpeed; }
 }

@@ -5,12 +5,10 @@ import java.awt.*;
 
 public class Starter extends JFrame {
 
-    GameView g = new GameView();
-
     public Starter()
     {
         Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
-        add(g);
+        add(new GameView());
         setTitle("Battle X Armada");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize((int) (size.getWidth() / 2),(int) (size.getHeight() - 35));
