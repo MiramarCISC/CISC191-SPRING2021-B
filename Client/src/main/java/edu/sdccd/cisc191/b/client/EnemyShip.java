@@ -3,8 +3,7 @@ package edu.sdccd.cisc191.b.client;
 
 import java.awt.*;
 /**
- * the enemy ship class is extended class of ship class and it specify how will the enemy ships will
- * move and how much score will user get.
+ * The enemy ship class is extended class of ship class and it specify how will the enemy ships will move and how much score will user get.
  */
 public class EnemyShip extends Ship{
     private int type;
@@ -55,22 +54,47 @@ public class EnemyShip extends Ship{
         this.y = y;
     }
 
+    /**
+     * Specifies enemy ship's type.
+     *
+     * @return the type's number value
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * Generates enemy ship's hit box. This handles enemy ship's collusion events.
+     *
+     * @return rectangle object that represent the hit box
+     */
     public Rectangle getHitBox() {
         return new Rectangle(getX(),getY(), 50,50);
     }
 
+    /**
+     *  Accesses the enemy ship's survival stats.
+     *
+     * @return the survival stats of the enemy ship
+     */
     public boolean isHit() {
         return hit;
     }
 
+    /**
+     * Sets the enemy ship's survival stats.
+     *
+     * @param hit the current survival stats of the enemy ship
+     */
     public void setHit(boolean hit) {
         this.hit = hit;
     }
 
+    /**
+     *  Accesses enemy's score points given to the player when the enemy ship's dies.
+     *
+     * @return the score value
+     */
     public int getScoreToDrop() {
         return scoreToDrop;
     }

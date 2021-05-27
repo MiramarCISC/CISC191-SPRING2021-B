@@ -4,14 +4,16 @@ import javax.swing.JFrame;
 import java.awt.*;
 
 /**
- * Starter is a extended class of JFrame. Starter class will define the way game will look
- * and it will also show title
+ * Starter is a extended class of JFrame. Starter class will define the way game will look and it will also show title.
  */
 
 public class Starter extends JFrame {
 
     GameView g = new GameView();
 
+    /**
+     * Generates the game view components.
+     */
     public Starter()
     {
         Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
@@ -25,6 +27,10 @@ public class Starter extends JFrame {
         setResizable(false);
     }
 
+    /**
+     * Launches the Starter class.
+     *
+     */
     public static void main(String[] args) {
         new Starter();
     }

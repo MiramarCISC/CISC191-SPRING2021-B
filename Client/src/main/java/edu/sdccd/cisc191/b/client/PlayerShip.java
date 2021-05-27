@@ -2,8 +2,7 @@ package edu.sdccd.cisc191.b.client;
 
 import java.awt.*;
 /**
- * player ship class is also extended class of ship class and this class will specify how many life players have
- * and the speed of player ship
+ * Player ship class is also extended class of ship class and this class will specify how many life players have and the speed of player ship.
  */
 
 public class PlayerShip extends Ship{
@@ -41,19 +40,37 @@ public class PlayerShip extends Ship{
         this.y = y;
     }
 
+    /**
+     *  Accesses the player ship's survival stats.
+     *
+     * @return the survival stats of the player ship
+     */
     public Rectangle getHitBox() {
         hitBox.setLocation(getX(), getY());
         return hitBox;
     }
 
+    /**
+     * Accesses the player's speed value.
+     *
+     * @return the speed value
+     */
     public int getMoveSpeed() {
         return moveSpeed;
     }
 
+    /**
+     * Accesses the player's current amount of lives.
+     *
+     * @return  the current total number of lives
+     */
     public int getLives() {
         return lives;
     }
 
+    /**
+     * Decrease the current amount number of lives.
+     */
     public void decrementLives(){ lives--; }
 
 }

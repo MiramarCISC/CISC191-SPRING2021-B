@@ -664,19 +664,36 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         leaderBoard = new ArrayList<>();
     }
 
+    /**
+     *Connects client to server.
+     *
+     * @param ip the clients ip
+     * @param port used to connect to server
+     * @throws Exception
+     */
     public void startConnection(String ip, int port) throws Exception {
         clientSocket = new Socket(ip, port);
         out = new ObjectOutputStream(clientSocket.getOutputStream());
         in = new ObjectInputStream(clientSocket.getInputStream());
     }
 
+    /**
+     * Disconnect client from the server.
+     *
+     * @throws IOException
+     */
     public void stopConnection() throws IOException {
         in.close();
         out.close();
         clientSocket.close();
     }
 
-
+    /**
+     * It establishes connection and sends user profile information.
+     * The connection stops when the information is received, and creates a User object for the player using the received login information
+     *
+     * @param userName user define name
+     */
     public void loginRequest(String userName) {
         try {
 
@@ -694,6 +711,12 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    /**
+     * Establish the connection with the server to send the user's username and score, and receives leaderboard information, which is the top 10 highest scores.
+     *
+     * @param userName user define name
+     * @param userScore
+     */
     public void leaderBoardRequest(String userName, int userScore) {
         try {
 
@@ -712,16 +735,43 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     }
 
     //the mouse is not used, except to interact with buttons
+
+    /**
+     * Handles an event when the mouse pressed.
+     *
+     * @param e stores the mouse event
+     */
     public void mousePressed(MouseEvent e) {}
 
+    /**
+     *  Handles an event when the mouse released.
+     *
+     * @param e stores the mouse event
+     */
     public void mouseReleased(MouseEvent e) {}
 
+    /**
+     *  Handles an event when the mouse entered.
+     *
+     * @param e stores the mouse event
+     */
     public void mouseEntered(MouseEvent e) {}
-
+    /**
+     *  Handles an event when the mouse exited.
+     *
+     * @param e stores the mouse event
+     */
     public void mouseExited(MouseEvent e) {}
-
+    /**
+     *  Handles an event when the mouse clicked.
+     *
+     * @param e stores the mouse event
+     */
     public void mouseClicked(MouseEvent e) {}
 
+    /**
+     *  will display the game animation
+     */
     public void run() {
 
         long beforeTime, timeDiff, sleep;
