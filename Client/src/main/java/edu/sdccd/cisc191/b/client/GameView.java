@@ -22,7 +22,7 @@ import java.awt.image.*;
  * arcade-shooter-style game.
  */
 
-public class GameView  extends JPanel implements Runnable, MouseListener
+public class GameView  extends JPanel implements Runnable
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
     boolean ingame = false;
@@ -63,7 +63,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     public GameView()
     {
         addKeyListener(new TAdapter());
-        addMouseListener(this);
         setFocusable(true);
         d = new Dimension(GameView_WIDTH, GameView_HEIGHT);
         setBackground(Color.black);
@@ -676,17 +675,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         } catch (Exception e) { e.printStackTrace(); }
     }
-
-    //mouse inputs are not used
-    public void mousePressed(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mouseClicked(MouseEvent e) {}
 
     public void run() {
 
