@@ -43,7 +43,6 @@ public class PlayerShip extends Ship{
         this.y = y;
     }
 
-    @Override
     public Bullet shoot() {
         return new Bullet(getX(),getY());
 

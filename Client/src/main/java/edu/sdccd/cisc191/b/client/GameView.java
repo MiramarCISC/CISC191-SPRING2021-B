@@ -513,7 +513,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         //moves all aliens down according to their moveSpeed
         for (int i = 0; i < aliens.length; i++){
-            aliens[i].y += aliens[i].moveSpeed;
+            aliens[i].y += aliens[i].getMoveSpeed();
         }
     }// end of move
 
@@ -605,7 +605,7 @@ public class GameView  extends JPanel implements Runnable, MouseListener
         //if a star travels below the game screen, sets it at a random position above the game screen
         for (int i = 0; i < stars.length; i++) {
             if (stars[i].getY() > GameView_HEIGHT + 1)
-                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), - 1);
+                stars[i].setLocation(randomNum.nextInt(GameView_WIDTH - 60), Math.random() * -1000);
         }
 
         //moves all stars down

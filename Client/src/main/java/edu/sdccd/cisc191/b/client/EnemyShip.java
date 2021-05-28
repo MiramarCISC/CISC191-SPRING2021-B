@@ -6,6 +6,7 @@ public class EnemyShip extends Ship{
     private int type;
     private int scoreToDrop;
     boolean hit;
+    private int moveSpeed;
 
     public EnemyShip(int x, int y, int type){
         super(x,y);
@@ -25,6 +26,14 @@ public class EnemyShip extends Ship{
             scoreToDrop = 35;
         }
         hit = false;
+    }
+
+    public int getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void setMoveSpeed(int moveSpeed) {
+        this.moveSpeed = moveSpeed;
     }
 
     public int getType() {
