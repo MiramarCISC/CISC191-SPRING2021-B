@@ -13,6 +13,7 @@ public class Starter extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize((int) (size.getWidth() / 2),(int) (size.getHeight() - 35));
         setLocationRelativeTo(null);
+        setUndecorated(true);
         setVisible(true);
         setResizable(false);
     }

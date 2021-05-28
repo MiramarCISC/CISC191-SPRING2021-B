@@ -5,84 +5,41 @@ import java.awt.*;
 public class EnemyShip extends Ship{
     private int type;
     private int scoreToDrop;
-    private HealthBar hpView;
-    int maxHp, currentHp;
-    int x,y;
-    int moveSpeed;
+    boolean hit;
 
     public EnemyShip(int x, int y, int type){
-        super(0,0);
-        this.x = x;
-        this.y = y;
+        super(x,y);
         this.type = type;
         if (type == 1){
-            hpView = new HealthBar(maxHp);
-            hpView = new HealthBar(currentHp);
-            moveSpeed = 2;
-            scoreToDrop = 1;
+            setMoveSpeed(2);
+            scoreToDrop = 7;
         }
 
         if (type == 2){
-            hpView = new HealthBar(maxHp);
-            hpView = new HealthBar(currentHp);
-            moveSpeed = 4;
-            scoreToDrop = 2;
+            setMoveSpeed(4);
+            scoreToDrop = 15;
         }
 
         if (type == 3){
-            hpView = new HealthBar(maxHp);
-            hpView = new HealthBar(currentHp);
-            moveSpeed = 6;
-            scoreToDrop = 3;
+            setMoveSpeed(6);
+            scoreToDrop = 35;
         }
+        hit = false;
     }
+
+    public int getType() {
+        return type;
+    }
+
+    public Rectangle getHitBox() {
+        return new Rectangle(getX(), getY(), 50,50);
+    }
+
+    public boolean isHit() { return hit; }
+
+    public void setHit(boolean hit) { this.hit = hit; }
 
     public int getScoreToDrop() {
         return scoreToDrop;
-    }
-
-    public void setScoreToDrop(int scoreToDrop) {
-        this.scoreToDrop = scoreToDrop;
-    }
-
-    public int getMaxHp() {
-        return maxHp;
-    }
-
-    public void setMaxHp(int maxHp) {
-        this.maxHp = maxHp;
-    }
-
-    public int getCurrentHp() {
-        return currentHp;
-    }
-
-    public void setCurrentHp(int currentHp) {
-        this.currentHp = currentHp;
-    }
-
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    @Override
-    public void shoot(){
-
     }
 }

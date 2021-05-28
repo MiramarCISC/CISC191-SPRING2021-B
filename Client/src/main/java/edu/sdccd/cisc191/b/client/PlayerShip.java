@@ -3,90 +3,48 @@ package edu.sdccd.cisc191.b.client;
 import java.awt.*;
 
 public class PlayerShip extends Ship{
-    private int moveSpeed;
     private int lives;
-    private HealthBar hpView;
-    private int maxHp, currentHp;
-    int x, y;
-    boolean moveLeft, moveUp, moveRight, moveDown;
+    private boolean alive;
+    private boolean moveLeft, moveUp, moveRight, moveDown, bullet;
 
-    public PlayerShip(int x, int y, int maxHP, int atk){
-        super(x,y, maxHP,atk);
+    public PlayerShip(int x, int y){
+        super(x,y);
         lives = 3;
-        moveSpeed = 5;
-        this.maxHp = maxHP;
-        currentHp = maxHP;
-        hpView = new HealthBar(maxHP);
-        hpView = new HealthBar(currentHp);
-
+        setMoveSpeed(4);
+        setAlive(true);
     }
 
-    public int getMoveSpeed() {
-        return moveSpeed;
-    }
+    public Rectangle getHitBox() { return new Rectangle(getX(), getY(), 50, 50); }
 
-    public void setMoveSpeed(int moveSpeed) {
-        this.moveSpeed = moveSpeed;
+    public boolean isAlive() { return alive; }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 
     public int getLives() {
         return lives;
     }
 
-    public void setLives(int lives) {
-        this.lives = lives;
-    }
+    public void decrementLives(){ lives--; }
 
-    private void implementPowerUp(PowerUp power){
+    public boolean isMoveLeft() { return moveLeft; }
 
-    }
+    public void setMoveLeft(boolean moveLeft) { this.moveLeft = moveLeft; }
 
-    private void endPowerUp(){
+    public boolean isMoveUp() { return moveUp;}
 
-    }
+    public void setMoveUp(boolean moveUp) { this.moveUp = moveUp; }
 
-    public void addLives(int add){
+    public boolean isMoveRight() { return moveRight; }
 
-    }
+    public void setMoveRight(boolean moveRight) { this.moveRight = moveRight; }
 
-    public void detractLives(int detract){
+    public boolean isMoveDown() { return moveDown; }
 
-    }
+    public void setMoveDown(boolean moveDown) { this.moveDown = moveDown; }
 
-    public int getX() {
-        return x;
-    }
+    public boolean isBullet() { return bullet; }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getMaxHp() {
-        return maxHp;
-    }
-
-    public void setMaxHp(int maxHp) {
-        this.maxHp = maxHp;
-    }
-
-    public int getCurrentHp() {
-        return currentHp;
-    }
-
-    public void setCurrentHp(int currentHp) {
-        this.currentHp = currentHp;
-    }
-
-    @Override
-    public void shoot() {
-
-    }
+    public void setBullet(boolean bullet) { this.bullet = bullet; }
 }
