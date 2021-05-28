@@ -103,6 +103,10 @@ public class Server {
                         out.writeObject(leaderBoard);
                         for (UserScoreResponse r : leaderBoard) log.info("UserScoreResponse sent: " + r);
                     }
+
+                    in.close();
+                    out.close();
+                    clientSocket.close();
                 } catch (Exception e) { e.printStackTrace(); }
             }).start();
         }
