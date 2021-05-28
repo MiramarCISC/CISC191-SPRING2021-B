@@ -5,6 +5,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * @author Joaquin Dicang
+ *
+ * This User class defines the User Entities which fill the database holding user profiles
+ * for our game. This class is available exclusively for Server functions.
+ */
 @Entity(name = "User_Entity")
 public class User{
     @Id
@@ -17,6 +23,13 @@ public class User{
 
     protected User(){}
 
+    /**
+     * The User entity constructor is only used if the server needs to create a profile for a new user.
+     * The only value required is a username provided by the player. All of the instance fields are set
+     * to default values.
+     *
+     * @param name Player's username
+     */
     public User(String name) {
         this.userName = name;
         gamesPlayed = 0;

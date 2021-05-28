@@ -32,6 +32,11 @@ import java.util.ArrayList;
  * with the higher score. The Server finds the top 10 Users with the highest scores, and
  * translates the List of User elements into an ArrayList of UserScoreResponse elements.
  * The Server sends the ArrayList to the Client.
+ *
+ * @see UserProfileRequest
+ * @see UserProfileResponse
+ * @see UserScoreRequest
+ * @see UserScoreResponse
  */
 @SpringBootApplication
 public class Server {
@@ -103,6 +108,10 @@ public class Server {
                         out.writeObject(leaderBoard);
                         for (UserScoreResponse r : leaderBoard) log.info("UserScoreResponse sent: " + r);
                     }
+
+                    in.close();
+                    out.close();
+                    clientSocket.close();
                 } catch (Exception e) { e.printStackTrace(); }
             }).start();
         }
