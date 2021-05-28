@@ -25,7 +25,7 @@ import java.awt.image.*;
  *
  */
 
-public class GameView  extends JPanel implements Runnable, MouseListener
+public class GameView  extends JPanel implements Runnable
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
     boolean ingame = false;
@@ -39,7 +39,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     boolean login = true;
     boolean loginWarning = false;
     boolean started = false;
-    int cursorCount = 0;
 
     Point playerDefault;
     PlayerShip player;
@@ -67,7 +66,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
     public GameView()
     {
         addKeyListener(new TAdapter());
-        addMouseListener(this);
         setFocusable(true);
         d = new Dimension(GameView_WIDTH, GameView_HEIGHT);
         setBackground(Color.black);
@@ -684,17 +682,6 @@ public class GameView  extends JPanel implements Runnable, MouseListener
 
         } catch (Exception e) { e.printStackTrace(); }
     }
-
-    //the mouse is not used, except to interact with buttons
-    public void mousePressed(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mouseClicked(MouseEvent e) {}
 
     public void run() {
 
