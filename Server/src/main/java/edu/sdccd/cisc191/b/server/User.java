@@ -6,10 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- * @author Joaquin Dicang
- *
  * This User class defines the User Entities which fill the database holding user profiles
  * for our game. This class is available exclusively for Server functions.
+ *
+ * @author Joaquin Dicang
  */
 @Entity(name = "User_Entity")
 public class User{

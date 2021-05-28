@@ -3,8 +3,17 @@ package edu.sdccd.cisc191.b.client;
 import javax.swing.JFrame;
 import java.awt.*;
 
+/**
+ * Create the window used to start the game.
+ *
+ * @author Kim Lim
+ * @see GameView
+ */
 public class Starter extends JFrame {
 
+    /**
+     * Set the dimensions, title, location, and visibility of the pane of which the game is played on.
+     */
     public Starter()
     {
         Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();

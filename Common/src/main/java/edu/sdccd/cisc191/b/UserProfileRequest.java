@@ -3,13 +3,14 @@ package edu.sdccd.cisc191.b;
 import java.io.Serializable;
 
 /**
- * @author Joaquin Dicang
- *
  * This class is used by the client to send profile requests to the server.
- *
+ *</p>
  * When the game is launched, the client prompts the user for their username.
  * When the user enters an appropriate name, a profile request is sent to the
  * server using the entered name in order to log in.
+ *
+ *
+ * @author Joaquin Dicang
  */
 public class UserProfileRequest implements Serializable {
     private String userName;

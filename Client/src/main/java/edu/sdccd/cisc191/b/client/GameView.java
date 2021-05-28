@@ -16,12 +16,11 @@ import javax.imageio.*;
 import java.awt.image.*;
 
 /**
- * @author Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, Maria Lourdes Thomas
- *
- * The GameView program provides the main player controls and visuals for the "Battle X Armada"
+ * The GameView program provides the main player controls, game logic, and visuals for the "Battle X Armada"
  * arcade-shooter-style game.
+ *
+ * @author Joaquin Dicang, Sholehani Hafezi, Shubham Joshi, Kim Lim, Maria Lourdes Thomas
  */
-
 public class GameView  extends JPanel implements Runnable
 {
     Dimension size = Toolkit. getDefaultToolkit(). getScreenSize();
@@ -60,6 +59,16 @@ public class GameView  extends JPanel implements Runnable
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+    /**
+     * Initializes and defines variables involved in the entire logic of the game and its visuals.
+     * </p>
+     * The constructor dose the following:
+     * </p>
+     * sets the dimensions for the game's screen, sets the background color and graphics, loads the images on ship entities,</p>
+     * creates the player ship and initializes its default position to the middle, creates a bullet linked list to store future bullets,</p>
+     * creates enemy ships and initializes their coordinates to a random position, initializes the leaderboards,</p>
+     * and creates an animation thread.
+     */
     public GameView()
     {
         addKeyListener(new TAdapter());
@@ -114,13 +123,13 @@ public class GameView  extends JPanel implements Runnable
     /**
      * This is the method that updates the state of every visual in the game, from Ships to the score,
      * to even the stars in the background. paint() is repeatedly called in GameView's run() method.
-     *
-     * Before playing:
+     *</p>
+     * Before playing:</p>
      *      paint() draws the "Battle X Armada" game logo at the top of the screen.
      *      The user is prompted to enter their username, and paint() draws the characters that are typed.
      *      If the user enters a name that is too short, paint() draws a warning message
-     *
-     * While playing:
+     *</p>
+     * While playing:</p>
      *      paint() checks for the states of objects using collision(), and moves objects using move().
      *      The header details ("Lives:" and "Score:") are drawn at the top left of the screen, and the
      *          player's user profile details are drawn at the bottom of the screen, regardless of the
@@ -309,8 +318,15 @@ public class GameView  extends JPanel implements Runnable
 
     }// end of paint
 
+    /**
+     * Used to handle all keyboard and mouse events done by the user.
+     */
     private class TAdapter extends KeyAdapter {
-
+        /**
+         * Handles keys that were released by the user, specifically for the arrow keys and space bar.
+         *
+         * @param e stores the release event caused by the keys
+         */
         public void keyReleased(KeyEvent e) {
             int key = e.getKeyCode();
 
@@ -333,7 +349,20 @@ public class GameView  extends JPanel implements Runnable
                 }
             }
         }
-
+        /**
+         * Handles keys that were pressed by the user and response with the appropriate actions. Keys pressed in the main menu and while the game is played are handled separate from each other.
+         * </p>
+         * The keys available are: </p>
+         * Backspace key: deletes previous character
+         * Enter key: validates username and transfers the screens visuals from the main menu to the game's
+         * Alphabet keys: used for defining username; defaulted to be capitalized, from "A" to "Z"
+         * Digit keys: used for defining username; from 0 to 9
+         * Space Bar key: for the main menu, it adds a space character; for in game use, it shoots a bullet
+         * Arrow Keys: used for player ship's movement
+         * Shift key: exits out of program entirely
+         *
+         * @param e stores the release event caused by the keys
+         */
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
 
@@ -429,7 +458,7 @@ public class GameView  extends JPanel implements Runnable
                 if (player.getY() < GameView_HEIGHT - imgPlayer.getHeight() && key == 40) { //down arrow
                     player.setMoveDown(true);
                 }
-                if (key == 32) { //space
+                if (key == 32) { //space bar
                     if (!player.isBullet()) {
                         player.setBullet(true);
                         shoot();
@@ -453,7 +482,9 @@ public class GameView  extends JPanel implements Runnable
         }//end of keyPress event
     }//end of class TAdapter
 
-
+    /**
+     * Loads images for the main menu's "Battle X Armada" logo and all the ship's visuals.
+     */
     private void loadImages() {
         try {
 
@@ -475,6 +506,9 @@ public class GameView  extends JPanel implements Runnable
         } catch (Exception e) { e.printStackTrace(); }
     }//end of loadImages
 
+    /**
+     * Adds bullets and removes bullets outside of the game's demensions.
+     */
     private void shoot() {
 
         //add a new bullet to the bullet list
@@ -489,6 +523,9 @@ public class GameView  extends JPanel implements Runnable
         }
     }//end of shoot
 
+    /**
+     * Moves all enemy ship's location downwards according to their movement speed, and moves bullets forwards.
+     */
     private void move(){
 
         //moves all bullets forward
@@ -501,6 +538,9 @@ public class GameView  extends JPanel implements Runnable
 
     }// end of move
 
+    /**
+     * Handles collisions between enemy ships and bullets, and enemy ships with the player ship.
+     */
     private void collision() {
 
         //if a bullet hits an enemy ship, set that enemy ship's hit status to true, and store a new bullet off screen
@@ -570,7 +610,11 @@ public class GameView  extends JPanel implements Runnable
         }//end of for
     }//end of collision
 
-    //generates a new enemy ship at a given index with a random position and type
+    /**
+     * Generates a new enemy ship at a given index with a random position and type.
+     *
+     * @param index a certain element within the aliens array list
+     */
     private void createShip(int index) {
 
         //sets random x and y positions
@@ -594,6 +638,9 @@ public class GameView  extends JPanel implements Runnable
 
     }//end of createShip
 
+    /**
+     * Updates background star visual of the game.
+     */
     private void updateStars() {
 
         //if a star travels below the game screen, sets it at a random position above the game screen
@@ -608,7 +655,9 @@ public class GameView  extends JPanel implements Runnable
 
     }//end of updateStars
 
-    //resets all game objects to their default values
+    /**
+     * Resets all game objects to their default values.
+     */
     private void resetGame() {
 
         //resets bullets
@@ -629,19 +678,34 @@ public class GameView  extends JPanel implements Runnable
         leaderBoard = new ArrayList<>();
     }
 
+    /**
+     * Creates a new client socket for connection with the server.
+     *
+     * @throws Exception if an exception occurs
+     */
     private void startConnection() throws Exception {
         clientSocket = new Socket("127.0.0.1", 4444);
         out = new ObjectOutputStream(clientSocket.getOutputStream());
         in = new ObjectInputStream(clientSocket.getInputStream());
     }
 
+    /**
+     * Disconnects the client from the server.
+     *
+     * @throws IOException if input and output exception occurs
+     */
     private void stopConnection() throws IOException {
         in.close();
         out.close();
         clientSocket.close();
     }
 
-
+    /**
+     * Attempts to connect to the server to send and receive user profile information.
+     * The connection stops when the information is received, and creates a User object for the player using the server's response.
+     *
+     * @param userName the user's username
+     */
     private void profileRequest(String userName) {
         try {
 
@@ -659,6 +723,12 @@ public class GameView  extends JPanel implements Runnable
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    /**
+     * Establish the connection with the server to send the user's username and score, and receives the the top 10 highest scores for the leaderboard.
+     *
+     * @param userName the user's username
+     * @param userScore the user's score
+     */
     private void leaderBoardRequest(String userName, int userScore) {
         try {
 
@@ -676,6 +746,9 @@ public class GameView  extends JPanel implements Runnable
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    /**
+     *  Displays the game's animation.
+     */
     public void run() {
 
         int animationDelay = 17;

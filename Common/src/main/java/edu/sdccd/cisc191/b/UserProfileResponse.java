@@ -3,12 +3,13 @@ package edu.sdccd.cisc191.b;
 import java.io.Serializable;
 
 /**
- * @author Joaquin Dicang
- *
  * This class is used by the server to send profile responses to the client.
- *
+ *</p>
  * After creating or receiving profile data from the database, the server sends
  * a response containing that profile data back to the client.
+ *
+ *
+ * @author Joaquin Dicang
  */
 public class UserProfileResponse implements Serializable {
     private String userName;

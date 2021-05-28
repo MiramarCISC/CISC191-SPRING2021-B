@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"edu.sdccd.cisc191.b"},{"l":"edu.sdccd.cisc191.b.client"},{"l":"edu.sdccd.cisc191.b.server"}];updateSearchResults();

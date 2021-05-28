@@ -3,12 +3,12 @@ package edu.sdccd.cisc191.b;
 import java.io.Serializable;
 
 /**
- * @author Joaquin Dicang
- *
  * This class is used by the client to send score requests to the server.
- *
+ *</p>
  * When the player loses all three lives and the game ends, the client takes
  * their username and final score and sends a score request to the server.
+ *
+ * @author Joaquin Dicang
  */
 public class UserScoreRequest implements Serializable {
     private String userName;

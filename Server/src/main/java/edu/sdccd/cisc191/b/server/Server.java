@@ -13,16 +13,14 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * @author Joaquin Dicang
- *
  * This program is a server used to send and receive data from the Client (GameView) pertaining to User objects.
- *
+ *</p>
  * When the game is launched, the Server receives a UserProfileRequest(userName) from
  * the Client containing a String userName. The Server finds a User in the database
  * with userName, and a User does not exist, the Server creates a User with userName
  * and saves it to the database. The Server sends a UserProfileResponse containing the
  * found or created User information to the Client.
- *
+ *</p>
  * As the game is played, the player accumulates score for defeating enemies, which is
  * stored and updated in an instance variable Integer score. When the game is over (the
  * player ship collides with an enemy ship, or an enemy ship reaches the bottom of the
@@ -33,6 +31,7 @@ import java.util.ArrayList;
  * translates the List of User elements into an ArrayList of UserScoreResponse elements.
  * The Server sends the ArrayList to the Client.
  *
+ * @author Joaquin Dicang
  * @see UserProfileRequest
  * @see UserProfileResponse
  * @see UserScoreRequest
