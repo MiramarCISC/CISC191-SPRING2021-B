@@ -61,7 +61,7 @@ public class EnemyShip extends Ship{
     }
 
     /**
-     *  Accesses the enemy ship's survival stats.
+     * Accesses the enemy ship's survival stats.
      *
      * @return the survival stats of the enemy ship
      */
@@ -75,7 +75,7 @@ public class EnemyShip extends Ship{
     public void setHit(boolean hit) { this.hit = hit; }
 
     /**
-     *  Accesses enemy's score points given to the player when the enemy ship's dies.
+     * Accesses enemy's score points given to the player when the enemy ship's dies.
      *
      * @return the score value
      */

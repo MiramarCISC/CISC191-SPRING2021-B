@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 import java.awt.*;
 
 /**
- * Create the window used to start the game.
+ * Creates the window used to start the game.
  *
  * @author Kim Lim
  * @see GameView
@@ -12,7 +12,7 @@ import java.awt.*;
 public class Starter extends JFrame {
 
     /**
-     * Set the dimensions, title, location, and visibility of the pane of which the game is played on.
+     * Sets the dimensions, title, location, and visibility of the pane of which the game is played on.
      */
     public Starter()
     {

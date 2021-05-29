@@ -25,9 +25,7 @@ public class Ship {
      *
      * @return the x position
      */
-    public int getX() {
-        return x;
-    }
+    public int getX() { return x; }
 
     /**
      * Sets the ship's x coordinate.

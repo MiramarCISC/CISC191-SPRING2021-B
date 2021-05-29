@@ -1,10 +1,11 @@
 package edu.sdccd.cisc191.b.client;
 
 /**
- * @author Joaquin Dicang
- *
  * The User class defines User objects to be used as profiles for our game.
  * This class is available exclusively for client functions.
+ *
+ *
+ * @author Joaquin Dicang
  */
 public class User{
     private String userName;

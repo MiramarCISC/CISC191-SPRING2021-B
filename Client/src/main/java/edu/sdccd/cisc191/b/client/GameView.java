@@ -77,7 +77,7 @@ public class GameView  extends JPanel implements Runnable
         setBackground(Color.black);
 
         //setup for UI
-        fontName = "Arial";
+        fontName = "Gameplay"; //note: if the Gameplay font is not available, text will display in a default font
         loadImages();
 
         //creates our player ship object and sets its position to the bottom middle of the screen (default position)
@@ -507,7 +507,7 @@ public class GameView  extends JPanel implements Runnable
     }//end of loadImages
 
     /**
-     * Adds bullets and removes bullets outside of the game's demensions.
+     * Adds bullets and removes bullets outside of the game's dimensions.
      */
     private void shoot() {
 
@@ -747,7 +747,7 @@ public class GameView  extends JPanel implements Runnable
     }
 
     /**
-     *  Displays the game's animation.
+     *  Displays the game's animation, repainting the GameView on every interval of every <b>animationDelay</b> milliseconds.
      */
     public void run() {
 

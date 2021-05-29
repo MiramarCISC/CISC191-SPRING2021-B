@@ -8,7 +8,6 @@ import java.awt.*;
  */
 public class Bullet {
     private int x,y;
-    private Bullet next;
 
     /**
      * Initializes the x and y positions of the bullet with parameters.
@@ -20,7 +19,6 @@ public class Bullet {
     public Bullet(int x, int y) {
         this.x = x;
         this.y = y;
-        next = null;
     }
 
     /**
@@ -29,18 +27,14 @@ public class Bullet {
      * @return rectangle object that represent the hit box
      * @see Rectangle
      */
-    public Rectangle getHitBox() {
-        return new Rectangle(getX(),getY(), 2,7);
-    }
+    public Rectangle getHitBox() { return new Rectangle(getX(),getY(), 2,7); }
 
     /**
      * Accesses the bullet's x coordinate.
      *
      * @return the X position
      */
-    public int getX() {
-        return x;
-    }
+    public int getX() { return x; }
 
     /**
      * Accesses the bullet's Y coordinate.
