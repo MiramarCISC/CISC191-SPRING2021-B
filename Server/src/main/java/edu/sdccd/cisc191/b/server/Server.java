@@ -50,6 +50,7 @@ public class Server {
         serverSocket = new ServerSocket(port);
 
         while (true) {
+
             //try connecting to available clients
             clientSocket = serverSocket.accept();
 

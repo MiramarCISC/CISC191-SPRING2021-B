@@ -36,6 +36,7 @@ public class GameView  extends JPanel implements Runnable
     boolean login = true;
     boolean loginWarning = false;
     boolean started = false;
+    int cursor = 0;
 
     Point playerDefault;
     PlayerShip player;
@@ -158,7 +159,7 @@ public class GameView  extends JPanel implements Runnable
         if (login) {
 
             //draws the "Battle X Armada" logo; blame Joaquin for how bad it looks
-            //  graphic design is my passion
+            //  graphic design is my passion -Joaquin
             g.drawImage(imgLogo, GameView_WIDTH/2 - imgLogo.getWidth()/2, 50, this);
             g.setColor(Color.white);
 
@@ -166,8 +167,25 @@ public class GameView  extends JPanel implements Runnable
             g.setFont(new Font(fontName, Font.PLAIN, 20));
             g.drawString("Enter your name to begin", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Enter your name to begin")/2,
                     (GameView_HEIGHT/4)*3);
-            g.drawString(playerName, GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName)/2,
-                    (GameView_HEIGHT/4)*3 + 30);
+
+            //draws the cursor of the "input field"
+            //  I know this was unnecessary I just thought it would look better -Joaquin
+            if (cursor > 35 && cursor < 45) {
+                cursor++;
+                g.drawString(playerName + "|", GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName + " ")/2,
+                        (GameView_HEIGHT/4)*3 + 30);
+            }
+            else if (cursor == 45) {
+                cursor = 0;
+                g.drawString(playerName + "|", GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName + " ")/2,
+                        (GameView_HEIGHT/4)*3 + 30);
+            }
+            else{
+                cursor++;
+                g.drawString(playerName + " ", GameView_WIDTH/2 - g.getFontMetrics().stringWidth(playerName + " ")/2,
+                        (GameView_HEIGHT/4)*3 + 30);
+            }
+
             g.setFont(new Font(fontName, Font.PLAIN, 15));
             g.drawString("Name can only be numbers and letters", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Name can only be numbers and letters")/2,
                     (GameView_HEIGHT/4)*3 + 55);
@@ -175,7 +193,8 @@ public class GameView  extends JPanel implements Runnable
             //draw warning text if a name is too long or too short
             if (loginWarning) {
                 g.setColor(Color.red);
-                g.drawString("Name must be at least 3 characters long", GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Name must be at least 3 characters long")/2,
+                g.drawString("Name must be at least 3 characters long and cannot be only spaces",
+                        GameView_WIDTH/2 - g.getFontMetrics().stringWidth("Name must be at least 3 characters long and cannot be only spaces")/2,
                         (GameView_HEIGHT/4)*3 + 75);
                 g.setColor(Color.white);
             }
@@ -415,9 +434,15 @@ public class GameView  extends JPanel implements Runnable
 
                 //enters the name and starts the game
                 if (key == 10) { //enter
+                    boolean valid = false;
+                    for (int i = 0; i < playerName.length(); i++) {
+                        if (!(playerName.charAt(i) == ' ')) {
+                            valid = true;
+                        }
+                    }
 
                     //checks if the entered name is the appropriate length, then "logs in"
-                    if (playerName.length() > 2 && playerName.length() <= 15) {
+                    if (playerName.length() > 2 && playerName.length() <= 15 && valid) {
 
                         //contact server and send name to log in
                         Thread sendName = new Thread( () -> { profileRequest(playerName); } );
@@ -438,7 +463,7 @@ public class GameView  extends JPanel implements Runnable
                     }
 
                     //if the entered name is not long enough, flag to print a warning on the screen
-                    if (playerName.length() < 3) { loginWarning = true; }
+                    else if (playerName.length() < 3 || !valid) { loginWarning = true; }
 
                 }
             }
